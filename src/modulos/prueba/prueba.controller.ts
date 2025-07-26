@@ -4,7 +4,7 @@ import { CreatePruebaDto } from './dto/create-prueba.dto';
 import { PruebaGuard } from './guards/prueba/prueba.guard';
 
 // El controler maneja las peticiones HTTP, por lo que maneja las request
-@Controller({})
+@Controller('prueba')
 export class PruebaController {
 
     constructor (private pruebas:PruebaService ){}   

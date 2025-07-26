@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -16,5 +15,5 @@ datasource db {
 
 model TipoProducto {
   id     Int    @id @default(autoincrement())
-  nombre String
+  nombre String @unique
 }
