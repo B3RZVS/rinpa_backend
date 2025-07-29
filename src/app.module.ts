@@ -1,15 +1,19 @@
 import { ConfigModule } from '@nestjs/config';
-import { Module } from '@nestjs/common';
-import { PruebaModule } from './modulos/prueba/prueba.module';
-import { TipoProductoModule } from './modulos/tipo-producto/tipo-producto.module';
+import { All, Module } from '@nestjs/common';
+
+import { PrismaModule } from './prisma/prisma.module';
+import { PrismaService } from './prisma/prisma.service';
+import { ProductoModule } from './modulos/producto/producto.module';
 import configuration from './config/configuration';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
-    PruebaModule,
-    TipoProductoModule
+    ProductoModule,
+    PrismaModule,
     // otros módulos
   ],
+  providers: [PrismaService, AllExceptionsFilter],
 })
 export class AppModule {}
