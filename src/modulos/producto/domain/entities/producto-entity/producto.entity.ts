@@ -47,6 +47,6 @@ export class ProductoEntity {
     return this.medida.getUnidadSimbolo();
   }
   getMedidaNombreSimbolo() {
-    return `${this.medida.getCantidad()} ${this.medida.getUnidadSimbolo()} `;
+    return `${this.medida.getCantidad()} ${this.medida.getUnidadSimbolo()}`;
   }
 }

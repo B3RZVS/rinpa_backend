@@ -5,12 +5,10 @@ import { ProductoDAO } from 'src/modulos/producto/infrastructure/persistence/pro
 
 @Injectable()
 export class ProductoService {
-  private readonly productoValidator: ProductoValidator;
   constructor(
     @Inject('ProductoIDAO') private readonly productoDAO: ProductoDAO,
-  ) {
-    this.productoValidator = new ProductoValidator(this.productoDAO);
-  }
+    private readonly productoValidator: ProductoValidator,
+  ) {}
 
   async getAll(): Promise<ProductoEntity[]> {
     return await this.productoDAO.findAll();
@@ -22,11 +20,8 @@ export class ProductoService {
     tipoProductoId: number,
     medidaId: number,
   ): Promise<ProductoEntity> {
-    await this.productoValidator.ensureNameIsUnique(
-      tipoProductoId,
-      medidaId,
-      0,
-    );
+    await this.productoValidator.validateCreate(tipoProductoId, medidaId);
+
     return this.productoDAO.create(
       precio,
       descripcion,
@@ -37,12 +32,13 @@ export class ProductoService {
 
   async update(
     id: number,
-    precio: number,
-    descripcion: string,
+    precio?: number,
+    descripcion?: string,
   ): Promise<ProductoEntity> {
     await this.productoValidator.ensureExistsById(id);
     return this.productoDAO.update(id, precio, descripcion);
   }
+
   async delete(id: number): Promise<void> {
     await this.productoValidator.ensureExistsById(id);
     await this.productoDAO.delete(id);

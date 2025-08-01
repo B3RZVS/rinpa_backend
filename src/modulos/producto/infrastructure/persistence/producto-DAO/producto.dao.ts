@@ -3,17 +3,32 @@ import { ProductoIDAO } from '../../datoTypes/producto-IDAO/producto.dao.interfa
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductoMapper } from '../../mappers/producto-mapper/producto.mapper';
 import { Injectable } from '@nestjs/common';
+
 @Injectable()
 export class ProductoDAO implements ProductoIDAO {
   constructor(private readonly prisma: PrismaService) {}
 
+  //GET
   async findAll(): Promise<ProductoEntity[]> {
     const productos = await this.prisma.producto.findMany({
-      include: { tipoProducto: true, medida: true },
+      include: {
+        tipoProducto: true,
+        medida: {
+          include: {
+            unidad: true,
+          },
+        },
+      },
     });
-    return productos.map(ProductoMapper.toEntity);
+    try {
+      return productos.map(ProductoMapper.toEntity);
+    } catch (error) {
+      console.error('Error mapeando producto:', error);
+      throw error;
+    }
   }
 
+  //POST
   async create(
     precio: number,
     descripcion: string,
@@ -28,54 +43,67 @@ export class ProductoDAO implements ProductoIDAO {
         medidaId: medidaId,
       },
     });
-
-    const producto = await this.prisma.producto.findUnique({
-      where: { id: createProducto.id },
-      include: { medida: true, tipoProducto: true },
-    });
+    const producto = await this.findById(createProducto.id);
     if (!producto) throw new Error('Error al buscar el producto recién creada');
-    return ProductoMapper.toEntity(producto);
+    return producto;
   }
 
+  //PUT
   async update(
     id: number,
     precio?: number,
     descripcion?: string,
   ): Promise<ProductoEntity> {
+    const data: any = {};
+    if (precio !== undefined) data.precio = precio;
+    if (descripcion !== undefined) data.descripcion = descripcion;
+
     const updateProducto = await this.prisma.producto.update({
       where: { id },
-      data: {
-        precio,
-        descripcion,
-      },
+      data,
     });
-    const producto = await this.prisma.producto.findUnique({
-      where: { id: updateProducto.id },
-      include: { medida: true, tipoProducto: true },
-    });
+    const producto = await this.findById(updateProducto.id);
     if (!producto) throw new Error('Error al buscar el producto recién creada');
-    return ProductoMapper.toEntity(producto);
+    return producto;
   }
+
+  //DELETE
   async delete(id: number): Promise<void> {
     await this.prisma.producto.delete({ where: { id } });
   }
 
+  //FINDById
   async findById(id: number): Promise<ProductoEntity | null> {
     const producto = await this.prisma.producto.findUnique({
       where: { id },
-      include: { medida: true, tipoProducto: true },
+      include: {
+        medida: {
+          include: {
+            unidad: true,
+          },
+        },
+        tipoProducto: true,
+      },
     });
 
     return producto ? ProductoMapper.toEntity(producto) : null;
   }
 
+  //FindByProducto
   async findByProducto(
     tipoProductoId: number,
     medidaId: number,
   ): Promise<ProductoEntity | null> {
     const producto = await this.prisma.producto.findFirst({
       where: { tipoProductoId, medidaId },
-      include: { medida: true, tipoProducto: true },
+      include: {
+        medida: {
+          include: {
+            unidad: true,
+          },
+        },
+        tipoProducto: true,
+      },
     });
     return producto ? ProductoMapper.toEntity(producto) : null;
   }

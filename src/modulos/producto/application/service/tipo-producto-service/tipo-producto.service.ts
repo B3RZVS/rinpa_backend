@@ -5,14 +5,11 @@ import { ITipoProductoDAO } from 'src/modulos/producto/infrastructure/datoTypes/
 
 @Injectable()
 export class TipoProductoService {
-  private readonly validator: TipoProductoValidator;
-
   constructor(
     @Inject('ITipoProductoDAO')
     private readonly tipoProductoDAO: ITipoProductoDAO,
-  ) {
-    this.validator = new TipoProductoValidator(tipoProductoDAO);
-  }
+    private readonly validator: TipoProductoValidator,
+  ) {}
 
   async getAll(): Promise<TipoProductoEntity[]> {
     return this.tipoProductoDAO.findAll();

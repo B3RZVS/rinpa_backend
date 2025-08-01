@@ -1,4 +1,4 @@
-import { IsNumber, MaxLength, Min } from 'class-validator';
+import { IsNumber, IsOptional, MaxLength, Min } from 'class-validator';
 
 export class UpdateProductoDTO {
   @Min(1)
@@ -6,8 +6,10 @@ export class UpdateProductoDTO {
   id: number;
   @Min(1)
   @IsNumber()
-  precio: number;
+  @IsOptional()
+  precio?: number;
 
   @MaxLength(150)
-  descripcion: string;
+  @IsOptional()
+  descripcion?: string;
 }

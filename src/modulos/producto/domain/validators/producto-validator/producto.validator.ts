@@ -1,10 +1,16 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { MedidaIDAO } from 'src/modulos/producto/infrastructure/datoTypes/medida-IDAO/medida.dao.interface';
 import { ProductoIDAO } from 'src/modulos/producto/infrastructure/datoTypes/producto-IDAO/producto.dao.interface';
+import { ITipoProductoDAO } from 'src/modulos/producto/infrastructure/datoTypes/tipo-producto-IDAO/tipo-producto.dao.interface';
+import { MedidaValidator } from '../medida-validator/medida.validator';
+import { TipoProductoValidator } from '../tipo-producto-validator/tipo-producto.validator';
 
 @Injectable()
 export class ProductoValidator {
   constructor(
     @Inject('ProductoIDAO') private readonly productoDAO: ProductoIDAO,
+    private readonly medidaValidator: MedidaValidator,
+    private readonly tipoProductoValidator: TipoProductoValidator,
   ) {}
 
   /**
@@ -33,5 +39,13 @@ export class ProductoValidator {
     if (exists && exists.getId() !== idToExclude) {
       throw new ConflictException(`El producto ya existe.`);
     }
+  }
+  async validateCreate(
+    tipoProductoId: number,
+    medidaId: number,
+  ): Promise<void> {
+    await this.ensureNameIsUnique(tipoProductoId, medidaId, 0);
+    await this.medidaValidator.ensureExistsById(medidaId);
+    await this.tipoProductoValidator.ensureExistsById(tipoProductoId);
   }
 }

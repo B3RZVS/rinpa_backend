@@ -4,11 +4,10 @@ import { UnidadValidator } from 'src/modulos/producto/domain/validators/unidad-v
 import { UnidadEntity } from 'src/modulos/producto/domain/entities/unidad-entity/Unidad.entity';
 @Injectable()
 export class UnidadService {
-  private readonly validatorUnidad: UnidadValidator;
-
-  constructor(@Inject('UnidadIDAO') private readonly unidadDAO: UnidadIDAO) {
-    this.validatorUnidad = new UnidadValidator(unidadDAO);
-  }
+  constructor(
+    @Inject('UnidadIDAO') private readonly unidadDAO: UnidadIDAO,
+    private readonly validatorUnidad: UnidadValidator,
+  ) {}
 
   async getAll(): Promise<UnidadEntity[]> {
     return this.unidadDAO.findAll();
