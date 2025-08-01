@@ -16,6 +16,7 @@ datasource db {
 model TipoProducto {
   id     Int    @id @default(autoincrement())
   nombre String @unique
+  productos Producto[]
 }
 model Unidad {
   id     Int    @id @default(autoincrement())
@@ -29,4 +30,15 @@ model Medida {
   unidadId  Int
   unidad    Unidad @relation(fields: [unidadId], references: [id])
   @@unique([cantidad, unidadId])
+  productos Producto[]
+}
+
+model Producto{
+  id             Int          @id @default(autoincrement())
+  descripcion    String
+  precio         Float
+  tipoProductoId Int
+  tipoProducto   TipoProducto @relation(fields: [tipoProductoId], references: [id])
+  medidaId       Int
+  medida         Medida       @relation(fields: [medidaId], references: [id])
 }

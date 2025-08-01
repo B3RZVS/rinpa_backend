@@ -1,4 +1,4 @@
-import { MedidaEntity } from '../../entities/medida-entity/medidaEntity';
+import { MedidaEntity } from 'src/modulos/producto/domain/entities/medida-entity/medidaEntity';
 
 export interface MedidaIDAO {
   findAll(): Promise<MedidaEntity[]>;

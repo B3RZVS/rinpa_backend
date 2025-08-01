@@ -1,5 +1,5 @@
 import { PrismaService } from '../../../../../prisma/prisma.service';
-import { UnidadIDAO } from '../../../domain/ports/unidad-IDAO/unidad.dao.interface';
+import { UnidadIDAO } from '../../datoTypes/unidad-IDAO/unidad.dao.interface';
 import { UnidadEntity } from 'src/modulos/producto/domain/entities/unidad-entity/Unidad.entity';
 import { UnidadMapper } from '../../mappers/unidad-mapper/unidad.mapper';
 import { Injectable } from '@nestjs/common';

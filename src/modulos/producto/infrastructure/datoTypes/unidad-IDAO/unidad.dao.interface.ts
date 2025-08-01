@@ -1,4 +1,4 @@
-import { UnidadEntity } from '../../entities/unidad-entity/Unidad.entity';
+import { UnidadEntity } from 'src/modulos/producto/domain/entities/unidad-entity/Unidad.entity';
 
 export interface UnidadIDAO {
   findAll(): Promise<UnidadEntity[]>;
