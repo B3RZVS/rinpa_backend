@@ -1,13 +1,12 @@
 import { Injectable, Inject, Body } from '@nestjs/common';
-import { MedidaDAO } from 'src/modulos/producto/infrastructure/persistence/medida-DAO/medida.dao';
 import { MedidaValidator } from 'src/modulos/producto/domain/validators/medida-validator/medida.validator';
-
 import { MedidaEntity } from 'src/modulos/producto/domain/entities/medida-entity/medidaEntity';
+import { MedidaIDAO } from 'src/modulos/producto/domain/ports/medida-IDAO/medida.dao.interface';
 
 @Injectable()
 export class MedidaService {
   private readonly medidaValidator: MedidaValidator;
-  constructor(@Inject('MedidaIDAO') private readonly medidaDAO: MedidaDAO) {
+  constructor(@Inject('MedidaIDAO') private readonly medidaDAO: MedidaIDAO) {
     this.medidaValidator = new MedidaValidator(this.medidaDAO);
   }
 
