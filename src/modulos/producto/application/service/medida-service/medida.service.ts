@@ -5,10 +5,12 @@ import { MedidaIDAO } from 'src/modulos/producto/domain/ports/medida-IDAO/medida
 
 @Injectable()
 export class MedidaService {
+
   private readonly medidaValidator: MedidaValidator;
   constructor(@Inject('MedidaIDAO') private readonly medidaDAO: MedidaIDAO) {
     this.medidaValidator = new MedidaValidator(this.medidaDAO);
   }
+
 
   async getAll(): Promise<MedidaEntity[]> {
     return await this.medidaDAO.findAll();

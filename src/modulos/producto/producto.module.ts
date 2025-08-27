@@ -12,9 +12,18 @@ import { MedidaDAO } from './infrastructure/persistence/medida-DAO/medida.dao';
 import { MedidaValidator } from './domain/validators/medida-validator/medida.validator';
 import { MedidaController } from './application/controllers/medida-controller/medida.controller';
 import { MedidaService } from './application/service/medida-service/medida.service';
+import { ProductoService } from './application/service/producto-service/producto.service';
+import { ProductoDAO } from './infrastructure/persistence/producto-DAO/producto.dao';
+import { ProductoValidator } from './domain/validators/producto-validator/producto.validator';
+import { ProductoController } from './application/controllers/producto-controller/producto.controller';
 
 @Module({
-  controllers: [TipoProductoController, UnidadController, MedidaController],
+  controllers: [
+    TipoProductoController,
+    UnidadController,
+    MedidaController,
+    ProductoController,
+  ],
   providers: [
     PrismaService,
 
@@ -42,6 +51,14 @@ import { MedidaService } from './application/service/medida-service/medida.servi
     {
       provide: 'MedidaIDAO',
       useClass: MedidaDAO,
+    },
+    //Producto
+    ProductoService,
+    ProductoDAO,
+    ProductoValidator,
+    {
+      provide: 'ProductoIDAO',
+      useClass: ProductoDAO,
     },
   ],
 })

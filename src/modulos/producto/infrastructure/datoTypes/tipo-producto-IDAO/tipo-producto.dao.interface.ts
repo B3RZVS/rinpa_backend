@@ -1,4 +1,4 @@
-import { TipoProductoEntity } from '../../entities/tipo-producto-entity/tipo-producto.entity';
+import { TipoProductoEntity } from 'src/modulos/producto/domain/entities/tipo-producto-entity/tipo-producto.entity';
 
 export interface ITipoProductoDAO {
   findAll(): Promise<TipoProductoEntity[]>;

@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, Inject } from '@nestjs/common';
-import { ITipoProductoDAO } from '../../ports/tipo-producto-IDAO/tipo-producto.dao.interface';
+import { ITipoProductoDAO } from 'src/modulos/producto/infrastructure/datoTypes/tipo-producto-IDAO/tipo-producto.dao.interface';
 
 @Injectable()
 export class TipoProductoValidator {

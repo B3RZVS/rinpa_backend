@@ -1,19 +1,15 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
-import { TipoProductoDAO } from '../../../infrastructure/persistence/tipo-producto-DAO/tipo-producto.dao';
 import { TipoProductoEntity } from '../../../domain/entities/tipo-producto-entity/tipo-producto.entity';
 import { TipoProductoValidator } from '../../../domain/validators/tipo-producto-validator/tipo-producto.validator';
-import { ITipoProductoDAO } from '../../../domain/ports/tipo-producto-IDAO/tipo-producto.dao.interface';
+import { ITipoProductoDAO } from 'src/modulos/producto/infrastructure/datoTypes/tipo-producto-IDAO/tipo-producto.dao.interface';
 
 @Injectable()
 export class TipoProductoService {
-  private readonly validator: TipoProductoValidator;
-
   constructor(
     @Inject('ITipoProductoDAO')
     private readonly tipoProductoDAO: ITipoProductoDAO,
-  ) {
-    this.validator = new TipoProductoValidator(tipoProductoDAO);
-  }
+    private readonly validator: TipoProductoValidator,
+  ) {}
 
   async getAll(): Promise<TipoProductoEntity[]> {
     return this.tipoProductoDAO.findAll();
