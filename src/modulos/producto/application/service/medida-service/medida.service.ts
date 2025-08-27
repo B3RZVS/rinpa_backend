@@ -6,10 +6,10 @@ import { MedidaEntity } from 'src/modulos/producto/domain/entities/medida-entity
 
 @Injectable()
 export class MedidaService {
-  private readonly medidaValidator: MedidaValidator;
-  constructor(@Inject('MedidaIDAO') private readonly medidaDAO: MedidaDAO) {
-    this.medidaValidator = new MedidaValidator(this.medidaDAO);
-  }
+  constructor(
+    @Inject('MedidaIDAO') private readonly medidaDAO: MedidaDAO,
+    private readonly medidaValidator: MedidaValidator,
+  ) {}
 
   async getAll(): Promise<MedidaEntity[]> {
     return await this.medidaDAO.findAll();

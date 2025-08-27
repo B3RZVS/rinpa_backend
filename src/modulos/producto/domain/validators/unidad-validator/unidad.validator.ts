@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
-import { UnidadIDAO } from '../../ports/unidad-IDAO/unidad.dao.interface';
+import { UnidadIDAO } from 'src/modulos/producto/infrastructure/datoTypes/unidad-IDAO/unidad.dao.interface';
 
 @Injectable()
 export class UnidadValidator {

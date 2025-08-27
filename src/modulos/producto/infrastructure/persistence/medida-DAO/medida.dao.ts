@@ -1,5 +1,5 @@
 import { MedidaEntity } from 'src/modulos/producto/domain/entities/medida-entity/medidaEntity';
-import { MedidaIDAO } from 'src/modulos/producto/domain/ports/medida-IDAO/medida.dao.interface';
+import { MedidaIDAO } from '../../datoTypes/medida-IDAO/medida.dao.interface';
 import { MedidaMapper } from '../../mappers/medida-mapper/medida.mapper';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -22,6 +22,7 @@ export class MedidaDAO implements MedidaIDAO {
         unidadId: unidad,
       },
     });
+
     const medidaConUnidad = await this.prisma.medida.findUnique({
       where: { id: createdMedida.id },
       include: { unidad: true },

@@ -1,5 +1,5 @@
 import { Injectable, Inject, ConflictException } from '@nestjs/common';
-import { MedidaIDAO } from '../../ports/medida-IDAO/medida.dao.interface';
+import { MedidaIDAO } from 'src/modulos/producto/infrastructure/datoTypes/medida-IDAO/medida.dao.interface';
 
 @Injectable()
 export class MedidaValidator {

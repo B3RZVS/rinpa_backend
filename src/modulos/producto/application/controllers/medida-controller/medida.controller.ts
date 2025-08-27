@@ -8,17 +8,17 @@ import { DeleteMedidaDTO } from '../../dtos/medida-dto/delete-medida.dto';
 
 @Controller('medida')
 export class MedidaController {
-  constructor(private readonly medidaSerivice: MedidaService) {}
+  constructor(private readonly medidaService: MedidaService) {}
 
   @Get()
   async getMedidas() {
-    const medidas = await this.medidaSerivice.getAll();
+    const medidas = await this.medidaService.getAll();
     return medidas.map(MedidaResponseMapper.toResponse);
   }
 
   @Post()
   async crearMedida(@Body() dto: CreateMedidaDTO) {
-    const medida = await this.medidaSerivice.create(dto.cantidad, dto.unidadId);
+    const medida = await this.medidaService.create(dto.cantidad, dto.unidadId);
 
     return new ResponseDto(
       true,
@@ -28,7 +28,7 @@ export class MedidaController {
   }
   @Put()
   async actualizarMedida(@Body() dto: UpdateMedidaDTO) {
-    const medida = await this.medidaSerivice.update(
+    const medida = await this.medidaService.update(
       dto.id,
       dto.cantidad,
       dto.unidadId,
@@ -41,7 +41,7 @@ export class MedidaController {
   }
   @Delete()
   async eliminarMedida(@Body() dto: DeleteMedidaDTO) {
-    await this.medidaSerivice.delete(dto.id);
+    await this.medidaService.delete(dto.id);
     return new ResponseDto(true, 'Medida eliminada con éxito');
   }
 }

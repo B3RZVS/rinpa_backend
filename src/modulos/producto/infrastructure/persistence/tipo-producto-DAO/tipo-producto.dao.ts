@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { TipoProductoMapper } from '../../../infrastructure/mappers/tipo-producto-mapper/tipo-producto.mapper';
 import { TipoProductoEntity } from '../../../domain/entities/tipo-producto-entity/tipo-producto.entity';
-import { ITipoProductoDAO } from '../../../domain/ports/tipo-producto-IDAO/tipo-producto.dao.interface';
+import { ITipoProductoDAO } from '../../datoTypes/tipo-producto-IDAO/tipo-producto.dao.interface';
 
 @Injectable()
 export class TipoProductoDAO implements ITipoProductoDAO {
