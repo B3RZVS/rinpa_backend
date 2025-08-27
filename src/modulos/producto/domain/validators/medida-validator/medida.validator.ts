@@ -24,11 +24,9 @@ export class MedidaValidator {
     idToExclude: number,
   ): Promise<void> {
     const exists = await this.medidaDAO.findByCantidad(cantidad, unidadID);
-
+    const unidad = exists?.getUnidadSimbolo();
     if (exists && exists.getId() !== idToExclude) {
-      throw new ConflictException(
-        `La medida ${cantidad} con esa unidad ya existe.`,
-      );
+      throw new ConflictException(`La medida ${cantidad} ${unidad} ya existe.`);
     }
   }
 }

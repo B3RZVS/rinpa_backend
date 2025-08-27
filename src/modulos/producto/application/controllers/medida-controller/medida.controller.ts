@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { MedidaService } from '../../service/medida-service/medida.service';
 import { MedidaResponseMapper } from '../../mappersResponse/medida-mapper-response/medida-response.mapper';
 import { CreateMedidaDTO } from '../../dtos/medida-dto/create-medida.dto';
@@ -39,9 +47,9 @@ export class MedidaController {
       MedidaResponseMapper.toResponse(medida),
     );
   }
-  @Delete()
-  async eliminarMedida(@Body() dto: DeleteMedidaDTO) {
-    await this.medidaService.delete(dto.id);
+  @Delete(':id')
+  async eliminarMedida(@Param('id') id: string) {
+    await this.medidaService.delete(Number(id));
     return new ResponseDto(true, 'Medida eliminada con éxito');
   }
 }
