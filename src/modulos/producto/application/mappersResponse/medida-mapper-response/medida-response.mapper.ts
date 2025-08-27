@@ -7,6 +7,7 @@ export class MedidaResponseMapper {
       id: medida.getId(),
       cantidad: medida.getCantidad(),
       unidadSimbolo: medida.getUnidadSimbolo() || '',
+      unidadId: medida.getUnidadId(),
     };
   }
 }
