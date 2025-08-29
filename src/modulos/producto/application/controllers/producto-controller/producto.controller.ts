@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ProductoService } from '../../service/producto-service/producto.service';
 import { ProductoResponseMapper } from '../../mappersResponse/producto-mapper-response/producto-response.mapper';
 import { CreateProductoDTO } from '../../dtos/producto-dto/create-producto.dto';
@@ -45,9 +53,9 @@ export class ProductoController {
     );
   }
 
-  @Delete()
-  async eliminarProducto(@Body() dto: DeleteProductoDTO) {
-    await this.productoService.delete(dto.id);
+  @Delete(':id')
+  async eliminarProducto(@Param('id') id: string) {
+    await this.productoService.delete(Number(id));
     return new ResponseDto(true, 'Producto eliminada con éxito');
   }
 }
