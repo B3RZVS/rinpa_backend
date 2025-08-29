@@ -37,7 +37,9 @@ export class ProductoValidator {
     );
 
     if (exists && exists.getId() !== idToExclude) {
-      throw new ConflictException(`El producto ya existe.`);
+      throw new ConflictException(
+        `El producto ${exists.getTipoProducto} ${exists.getMedidaNombreSimbolo} ya existe.`,
+      );
     }
   }
   async validateCreate(
