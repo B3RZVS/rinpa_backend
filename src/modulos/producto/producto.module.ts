@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
-import { TipoProductoService } from '../producto/application/service/tipo-producto-service/tipo-producto.service';
-import { TipoProductoController } from '../producto/application/controllers/tipo-producto-controller/tipo-producto.controller';
-import { TipoProductoDAO } from '../producto/infrastructure/persistence/tipo-producto-DAO/tipo-producto.dao';
+import { TipoProductoService } from './services/tipo-producto/tipo-producto.service';
+import { TipoProductoController } from './controllers/tipo-producto/tipo-producto.controller';
+import { TipoProductoDAO } from './repository/tipo-producto.dao';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TipoProductoValidator } from '../producto/domain/validators/tipo-producto-validator/tipo-producto.validator';
-import { UnidadDAO } from './infrastructure/persistence/unidad-DAO/Unidad.dao';
-import { UnidadService } from './application/service/unidad-service/unidad.service';
-import { UnidadValidator } from './domain/validators/unidad-validator/unidad.validator';
-import { UnidadController } from './application/controllers/unidad-controller/Unidad.controller';
-import { MedidaDAO } from './infrastructure/persistence/medida-DAO/medida.dao';
-import { MedidaValidator } from './domain/validators/medida-validator/medida.validator';
-import { MedidaController } from './application/controllers/medida-controller/medida.controller';
-import { MedidaService } from './application/service/medida-service/medida.service';
-import { ProductoService } from './application/service/producto-service/producto.service';
-import { ProductoDAO } from './infrastructure/persistence/producto-DAO/producto.dao';
-import { ProductoValidator } from './domain/validators/producto-validator/producto.validator';
-import { ProductoController } from './application/controllers/producto-controller/producto.controller';
+import { TipoProductoValidator } from './validators/tipo-producto.validator';
+import { UnidadDAO } from './repository/Unidad.dao';
+import { UnidadService } from './services/unidad/unidad.service';
+import { UnidadValidator } from './validators/unidad.validator';
+import { UnidadController } from './controllers/unidad/Unidad.controller';
+import { MedidaDAO } from './repository/medida.dao';
+import { MedidaValidator } from './validators/medida.validator';
+import { MedidaController } from './controllers/medida/medida.controller';
+import { MedidaService } from './services/medida/medida.service';
+import { ProductoService } from './services/producto/producto.service';
+import { ProductoDAO } from './repository/producto.dao';
+import { ProductoValidator } from './validators/producto.validator';
+import { ProductoController } from './controllers/producto/producto.controller';
 
 @Module({
   controllers: [
