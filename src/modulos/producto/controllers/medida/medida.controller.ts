@@ -12,8 +12,6 @@ import { MedidaResponseMapper } from '../../mappers/mappersResponse/medida/medid
 import { CreateMedidaDTO } from '../../dtos/medida/create-medida.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { UpdateMedidaDTO } from '../../dtos/medida/update-medida.dto';
-import { DeleteMedidaDTO } from '../../dtos/medida/delete-medida.dto';
-
 @Controller('medida')
 export class MedidaController {
   constructor(private readonly medidaService: MedidaService) {}

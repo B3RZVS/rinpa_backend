@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - A unique constraint covering the columns `[cantidad,unidadId]` on the table `Medida` will be added. If there are existing duplicate values, this will fail.
-
-*/
 -- CreateTable
 CREATE TABLE "Rol" (
     "id" SERIAL NOT NULL,
@@ -26,6 +20,21 @@ CREATE TABLE "Usuario" (
     CONSTRAINT "Usuario_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Cliente" (
+    "id" SERIAL NOT NULL,
+    "nombre" TEXT NOT NULL,
+    "apellido" TEXT NOT NULL,
+    "telefono" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "direccion" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Cliente_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Rol_nombre_key" ON "Rol"("nombre");
 
@@ -36,7 +45,7 @@ CREATE UNIQUE INDEX "Usuario_email_key" ON "Usuario"("email");
 CREATE INDEX "Usuario_rolId_idx" ON "Usuario"("rolId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Medida_cantidad_unidadId_key" ON "Medida"("cantidad", "unidadId");
+CREATE UNIQUE INDEX "Cliente_email_key" ON "Cliente"("email");
 
 -- AddForeignKey
 ALTER TABLE "Usuario" ADD CONSTRAINT "Usuario_rolId_fkey" FOREIGN KEY ("rolId") REFERENCES "Rol"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
