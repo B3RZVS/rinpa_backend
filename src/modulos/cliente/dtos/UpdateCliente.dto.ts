@@ -38,5 +38,5 @@ export class UpdateClienteDTO {
   @IsString()
   @MinLength(5)
   @MaxLength(200)
-  direccio: string;
+  direccion: string;
 }
