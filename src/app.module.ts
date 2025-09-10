@@ -11,6 +11,7 @@ import { PrismaService } from './prisma/prisma.service';
 import configuration from './config/configuration';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { AuthModule } from './modulos/auth/auth.module';
+import { ClienteModule } from './modulos/cliente/cliente.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './modulos/auth/auth.module';
     PrismaModule,
     UserModule,
     AuthModule,
+    ClienteModule,
     // otros módulos
   ],
   providers: [PrismaService, AllExceptionsFilter],

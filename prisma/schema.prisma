@@ -29,7 +29,7 @@ model Medida {
   cantidad  Int
   unidadId  Int
   unidad    Unidad @relation(fields: [unidadId], references: [id])
-  @@unique([cantidad, unidadId])
+  @@unique([cantidad, unidadId], name: "Medida_cantidad_unidadId_unique")
   productos Producto[]
 }
 
@@ -61,4 +61,16 @@ model Producto{
   tipoProducto   TipoProducto @relation(fields: [tipoProductoId], references: [id])
   medidaId       Int
   medida         Medida       @relation(fields: [medidaId], references: [id])
+}
+model Cliente{
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  telefono    String
+  email       String   @unique
+  descripcion String?  // opcional
+  direccion   String
+  isDeleted   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
