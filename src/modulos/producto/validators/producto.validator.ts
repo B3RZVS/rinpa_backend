@@ -35,10 +35,9 @@ export class ProductoValidator {
       tipoProductoId,
       medidaID,
     );
-
     if (exists && exists.getId() !== idToExclude) {
       throw new ConflictException(
-        `El producto ${exists.getTipoProducto} ${exists.getMedidaNombreSimbolo} ya existe.`,
+        `El producto ${exists.getTipoProductoNombre()} ${exists.getMedidaNombreSimbolo()} ya existe.`,
       );
     }
   }
