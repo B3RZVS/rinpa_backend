@@ -50,7 +50,7 @@ model Usuario {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([rolId])
-  
+  entregas  Entrega[]
 }
 
 model Producto{
@@ -61,6 +61,7 @@ model Producto{
   tipoProducto   TipoProducto @relation(fields: [tipoProductoId], references: [id])
   medidaId       Int
   medida         Medida       @relation(fields: [medidaId], references: [id])
+  detalles    DetalleEntrega[]
 }
 model Cliente{
   id          Int      @id @default(autoincrement())
@@ -73,4 +74,46 @@ model Cliente{
   isDeleted   Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  entregas  Entrega[]
+}
+
+model PrecioNafta {
+  id        Int       @id @default(autoincrement())
+  precio    Float
+  fechaInicio DateTime @default(now())
+  fechaFin   DateTime?
+
+  entregas  Entrega[]
+}
+
+model Entrega {
+  id          Int        @id @default(autoincrement())
+  fecha       DateTime   @default(now())
+  litrosGastados    Float
+
+  
+  clienteId     Int
+  cliente       Cliente      @relation(fields: [clienteId], references: [id])
+
+  precioNaftaId Int
+  precioNafta   PrecioNafta @relation(fields: [precioNaftaId], references: [id])
+
+  usuarioId     Int
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id])
+
+  detalles    DetalleEntrega[]
+}
+
+model DetalleEntrega {
+  id            Int      @id @default(autoincrement())
+  cantidad      Int
+  precioUnitario Float
+  subTotal      Float
+
+  entregaId     Int
+  entrega       Entrega @relation(fields: [entregaId], references: [id])
+
+  productoId    Int
+  producto      Producto @relation(fields: [productoId], references: [id])
 }
