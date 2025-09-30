@@ -22,6 +22,9 @@ export class UserService {
   async getAll(): Promise<UserEntity[]> {
     return await this.userDAO.findAll();
   }
+  async getById(id: number): Promise<UserEntity | null> {
+    return await this.userDAO.findById(id);
+  }
 
   async create(user: CreateUserDto): Promise<UserEntity> {
     await this.userValidator.ensureMailIsUnique(user.email);

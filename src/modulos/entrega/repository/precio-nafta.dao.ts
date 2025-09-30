@@ -27,6 +27,13 @@ export class PrecioNaftaDAO implements PrecioNaftaIDAO {
     return precioNafta ? PrecioNaftaMapper.toEntity(precioNafta) : null;
   }
 
+  async findById(id: number): Promise<PrecioNaftaEntity | null> {
+    const exits = await this.prisma.precioNafta.findUnique({
+      where: { id },
+    });
+    return exits ? PrecioNaftaMapper.toEntity(exits) : null;
+  }
+
   async setDateEnd(data: PrecioNaftaEntity) {
     await this.prisma.precioNafta.update({
       where: { id: data.getId() },

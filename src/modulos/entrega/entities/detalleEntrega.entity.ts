@@ -1,7 +1,9 @@
+import { ProductoEntity } from 'src/modulos/producto/entities/producto.entity';
+
 export class DetalleEntregaEntity {
   constructor(
     private id: number,
-    private productoId: number,
+    private producto: ProductoEntity,
     private cantidad: number,
     private precioUnitario: number,
     private subTotal: number,
@@ -11,7 +13,10 @@ export class DetalleEntregaEntity {
     return this.id;
   }
   getProductoId() {
-    return this.productoId;
+    return this.producto.getId();
+  }
+  getProducto() {
+    return this.producto;
   }
 
   getCantidad() {

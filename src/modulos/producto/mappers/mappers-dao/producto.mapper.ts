@@ -13,7 +13,6 @@ export class ProductoMapper {
     if (!prisma.medida) {
       throw new Error('Medida es requerida para crear ProductoEntity');
     }
-
     const tipoProducto = TipoProductoMapper.toEntity(prisma.tipoProducto);
 
     const medida = MedidaMapper.toEntity(prisma.medida);

@@ -1,11 +1,15 @@
-import { CreateEntregaDTO } from '../dtos/entrega/create-entrega.dto';
+import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
+import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
 import { EntregaEntity } from '../entities/entrega.entity';
 
 export interface EntregaIDAO {
   findAll(): Promise<EntregaEntity[]>;
-  create(data: CreateEntregaDTO): Promise<EntregaEntity>;
-  update(id: number, cantidad: number, unidad: number): Promise<EntregaEntity>;
-  delete(id: number): Promise<void>;
+  create(
+    data: CreateEntrega,
+    detalles: CreateDetalleEntregaDTO[],
+  ): Promise<EntregaEntity>;
+  // update(id: number, cantidad: number, unidad: number): Promise<EntregaEntity>;
+  // delete(id: number): Promise<void>;
 
-  findById(id: number): Promise<EntregaEntity | null>;
+  // findById(id: number): Promise<EntregaEntity | null>;
 }

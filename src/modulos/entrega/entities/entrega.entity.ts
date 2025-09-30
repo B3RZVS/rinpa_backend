@@ -3,6 +3,7 @@ import { DetalleEntregaEntity } from './detalleEntrega.entity';
 export class EntregaEntity {
   constructor(
     private id: number,
+    private fecha: Date,
     private clienteId: number,
     private usuarioId: number,
     private precioNaftaId: number,
@@ -31,5 +32,8 @@ export class EntregaEntity {
 
   getLitrosGastados() {
     return this.litrosGastados;
+  }
+  getFecha() {
+    return this.fecha;
   }
 }

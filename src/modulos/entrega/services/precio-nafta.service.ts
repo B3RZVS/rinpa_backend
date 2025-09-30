@@ -12,6 +12,9 @@ export class PrecioNaftaService {
   async getAll(): Promise<PrecioNaftaEntity[]> {
     return await this.precioNaftaDAO.findAll();
   }
+  async getById(id: number): Promise<PrecioNaftaEntity | null> {
+    return await this.precioNaftaDAO.findById(id);
+  }
 
   async create(data: CreatePrecioNaftaDTO): Promise<PrecioNaftaEntity> {
     const precioActual = await this.precioNaftaDAO.findByDateEndIsNull();

@@ -3,25 +3,75 @@ import { EntregaIDAO } from '../types/entrega.dao.interface';
 import { EntregaMapper } from '../mappers/mapper-dao/entrega.mapper';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import e from 'express';
-import { CreateEntregaDTO } from '../dtos/entrega/create-entrega.dto';
+import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
+import { DetalleEntregaDAO } from './detalle-entrega.dao';
+import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
 
 @Injectable()
 export class EntregaDAO implements EntregaIDAO {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly detalleDao: DetalleEntregaDAO,
+  ) {}
 
   async findAll(): Promise<EntregaEntity[]> {
     const entregas = await this.prisma.entrega.findMany({
-      include: { detalles: true },
+      include: {
+        detalles: {
+          include: {
+            producto: {
+              include: {
+                tipoProducto: true,
+                medida: {
+                  include: {
+                    unidad: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
-    return entregas.map((e) => EntregaMapper.toEntity(e, e.detalles));
+    return entregas.map((e) => EntregaMapper.toEntity(e));
   }
 
-  async create(data: CreateEntregaDTO): Promise<EntregaEntity> {
+  async create(
+    data: CreateEntrega,
+    detalles: CreateDetalleEntregaDTO[],
+  ): Promise<EntregaEntity> {
+    //Creo entrega
     const createdEntrega = await this.prisma.entrega.create({
       data,
     });
-    return EntregaMapper.toEntity(createdEntrega);
+
+    //Creo detalles
+    await this.detalleDao.create(detalles, createdEntrega.id);
+
+    //recupero la entregas con los detalles
+    const entregaConDetalle = await this.prisma.entrega.findUnique({
+      where: { id: createdEntrega.id },
+      include: {
+        detalles: {
+          include: {
+            producto: {
+              include: {
+                tipoProducto: true,
+                medida: {
+                  include: {
+                    unidad: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!entregaConDetalle)
+      throw new Error('Error al buscar la entrega recién creada');
+    return EntregaMapper.toEntity(entregaConDetalle);
   }
 
   //   async update(
