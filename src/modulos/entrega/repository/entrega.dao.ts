@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
 import { DetalleEntregaDAO } from './detalle-entrega.dao';
 import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
+import { UpdateEntregaDTO } from '../dtos/entrega/update-entrega.dto';
 
 @Injectable()
 export class EntregaDAO implements EntregaIDAO {
@@ -16,6 +17,7 @@ export class EntregaDAO implements EntregaIDAO {
 
   async findAll(): Promise<EntregaEntity[]> {
     const entregas = await this.prisma.entrega.findMany({
+      where: { isDeleted: false },
       include: {
         detalles: {
           include: {
@@ -49,8 +51,34 @@ export class EntregaDAO implements EntregaIDAO {
     await this.detalleDao.create(detalles, createdEntrega.id);
 
     //recupero la entregas con los detalles
-    const entregaConDetalle = await this.prisma.entrega.findUnique({
-      where: { id: createdEntrega.id },
+    const entregaConDetalle = await this.findById(createdEntrega.id);
+
+    if (!entregaConDetalle)
+      throw new Error('Error al buscar la entrega recién creada');
+    return entregaConDetalle;
+  }
+
+  async update(id: number, data: UpdateEntregaDTO): Promise<EntregaEntity> {
+    await this.prisma.entrega.update({
+      where: { id },
+      data,
+    });
+    const EntregaUpdate = await this.findById(id);
+    if (!EntregaUpdate)
+      throw new Error('Error al buscar la Entrega recién modificada');
+    return EntregaUpdate;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.entrega.update({
+      where: { id },
+      data: { isDeleted: true },
+    });
+  }
+
+  async findById(id: number): Promise<EntregaEntity | null> {
+    const exits = await this.prisma.entrega.findUnique({
+      where: { id },
       include: {
         detalles: {
           include: {
@@ -68,57 +96,6 @@ export class EntregaDAO implements EntregaIDAO {
         },
       },
     });
-
-    if (!entregaConDetalle)
-      throw new Error('Error al buscar la entrega recién creada');
-    return EntregaMapper.toEntity(entregaConDetalle);
+    return exits ? EntregaMapper.toEntity(exits) : null;
   }
-
-  //   async update(
-  //     id: number,
-  //     cantidad: number,
-  //     unidad: number,
-  //   ): Promise<EntregaEntity> {
-  //     const updatedEntrega = await this.prisma.entrega.update({
-  //       where: { id },
-  //       data: {
-  //         cantidad,
-  //         unidadId: unidad,
-  //       },
-  //     });
-  //     const EntregaConUnidad = await this.prisma.entrega.findUnique({
-  //       where: { id: updatedEntrega.id },
-  //       include: { unidad: true },
-  //     });
-
-  //     if (!EntregaConUnidad)
-  //       throw new Error('Error al buscar la Entrega recién modificada');
-  //     return EntregaMapper.toEntity(EntregaConUnidad);
-  //   }
-
-  //   async delete(id: number): Promise<void> {
-  //     await this.prisma.entrega.delete({
-  //       where: { id },
-  //     });
-  //   }
-
-  //   async findById(id: number): Promise<EntregaEntity | null> {
-  //     const exits = await this.prisma.Entrega.findUnique({
-  //       where: { id },
-  //       include: { unidad: true },
-  //     });
-  //     return exits ? EntregaMapper.toEntity(exits) : null;
-  //   }
-
-  //   async findByCantidad(
-  //     cantidad: number,
-  //     unidadId: number,
-  //   ): Promise<EntregaEntity | null> {
-  //     const exits = await this.prisma.Entrega.findFirst({
-  //       where: { cantidad: cantidad, unidadId: unidadId },
-  //       include: { unidad: true },
-  //     });
-
-  //     return exits ? EntregaMapper.toEntity(exits) : null;
-  //   }
 }

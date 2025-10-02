@@ -1,5 +1,6 @@
 import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
 import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
+import { UpdateEntregaDTO } from '../dtos/entrega/update-entrega.dto';
 import { EntregaEntity } from '../entities/entrega.entity';
 
 export interface EntregaIDAO {
@@ -8,8 +9,8 @@ export interface EntregaIDAO {
     data: CreateEntrega,
     detalles: CreateDetalleEntregaDTO[],
   ): Promise<EntregaEntity>;
-  // update(id: number, cantidad: number, unidad: number): Promise<EntregaEntity>;
-  // delete(id: number): Promise<void>;
+  update(id: number, data: UpdateEntregaDTO): Promise<EntregaEntity>;
+  delete(id: number): Promise<void>;
 
   // findById(id: number): Promise<EntregaEntity | null>;
 }

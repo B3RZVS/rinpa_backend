@@ -27,6 +27,7 @@ export class EntregaMapper {
       model.usuarioId,
       model.precioNaftaId,
       model.litrosGastados,
+      model.isDeleted,
       detallesEntity || [],
     );
   }

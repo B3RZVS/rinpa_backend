@@ -8,6 +8,7 @@ export class EntregaEntity {
     private usuarioId: number,
     private precioNaftaId: number,
     private litrosGastados: number,
+    private isDelete: boolean,
     private detalles: DetalleEntregaEntity[],
   ) {}
 
@@ -35,5 +36,8 @@ export class EntregaEntity {
   }
   getFecha() {
     return this.fecha;
+  }
+  getIsDelete() {
+    return this.isDelete;
   }
 }
