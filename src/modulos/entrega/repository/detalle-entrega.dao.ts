@@ -19,9 +19,13 @@ export class DetalleEntregaDAO implements DetalleEntregaIDAO {
     return detalleEntregas.map((e) => DetalleEntregaMapper.toEntity(e));
   }
 
-  async create(data: CreateDetalleEntregaDTO[], entregaId: number) {
+  async create(
+    data: CreateDetalleEntregaDTO | CreateDetalleEntregaDTO[],
+    entregaId: number,
+  ) {
+    const detalles = Array.isArray(data) ? data : [data];
     await this.prisma.detalleEntrega.createMany({
-      data: data.map((d) => ({
+      data: detalles.map((d) => ({
         cantidad: d.cantidad,
         precioUnitario: d.precioUnitario,
         subTotal: d.cantidad * d.precioUnitario,
@@ -31,51 +35,41 @@ export class DetalleEntregaDAO implements DetalleEntregaIDAO {
     });
   }
 
-  //   async update(
-  //     id: number,
-  //     cantidad: number,
-  //     unidad: number,
-  //   ): Promise<EntregaEntity> {
-  //     const updatedEntrega = await this.prisma.entrega.update({
-  //       where: { id },
-  //       data: {
-  //         cantidad,
-  //         unidadId: unidad,
-  //       },
-  //     });
-  //     const EntregaConUnidad = await this.prisma.entrega.findUnique({
-  //       where: { id: updatedEntrega.id },
-  //       include: { unidad: true },
-  //     });
+  async update(id: number, cantidad: number): Promise<DetalleEntregaEntity> {
+    const updatedDetalleEntrega = await this.prisma.detalleEntrega.update({
+      where: { id },
+      data: {
+        cantidad,
+      },
+    });
+    const detalleEntrega = await this.findById(updatedDetalleEntrega.id);
+    if (!detalleEntrega)
+      throw new Error('Error al buscar el detelle recién modificada');
+    return detalleEntrega;
+  }
 
-  //     if (!EntregaConUnidad)
-  //       throw new Error('Error al buscar la Entrega recién modificada');
-  //     return EntregaMapper.toEntity(EntregaConUnidad);
-  //   }
+  async delete(id: number): Promise<void> {
+    await this.prisma.detalleEntrega.delete({
+      where: { id },
+    });
+  }
 
-  //   async delete(id: number): Promise<void> {
-  //     await this.prisma.entrega.delete({
-  //       where: { id },
-  //     });
-  //   }
-
-  //   async findById(id: number): Promise<EntregaEntity | null> {
-  //     const exits = await this.prisma.Entrega.findUnique({
-  //       where: { id },
-  //       include: { unidad: true },
-  //     });
-  //     return exits ? EntregaMapper.toEntity(exits) : null;
-  //   }
-
-  //   async findByCantidad(
-  //     cantidad: number,
-  //     unidadId: number,
-  //   ): Promise<EntregaEntity | null> {
-  //     const exits = await this.prisma.Entrega.findFirst({
-  //       where: { cantidad: cantidad, unidadId: unidadId },
-  //       include: { unidad: true },
-  //     });
-
-  //     return exits ? EntregaMapper.toEntity(exits) : null;
-  //   }
+  async findById(id: number): Promise<DetalleEntregaEntity | null> {
+    const exits = await this.prisma.detalleEntrega.findUnique({
+      where: { id },
+      include: {
+        producto: {
+          include: {
+            tipoProducto: true,
+            medida: {
+              include: {
+                unidad: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return exits ? DetalleEntregaMapper.toEntity(exits) : null;
+  }
 }

@@ -10,10 +10,16 @@ import { DetalleEntregaDAO } from './repository/detalle-entrega.dao';
 import { EntregaController } from './controllers/entrega.controller';
 import { ClienteModule } from '../cliente/cliente.module';
 import { UserModule } from '../user/user.module';
+import { DetalleEntregaController } from './controllers/detalle-entrega.controller';
+import { DetalleEntregaService } from './services/detalle-entrega.service';
 
 @Module({
   imports: [ClienteModule, UserModule],
-  controllers: [PrecioNaftaController, EntregaController],
+  controllers: [
+    PrecioNaftaController,
+    EntregaController,
+    DetalleEntregaController,
+  ],
   providers: [
     PrismaService,
 
@@ -25,6 +31,7 @@ import { UserModule } from '../user/user.module';
     EntregaDAO,
     { provide: 'EntregaIDAO', useClass: EntregaDAO },
 
+    DetalleEntregaService,
     DetalleEntregaEntity,
     DetalleEntregaDAO,
     { provide: 'DetalleEntregaIDAO', useClass: DetalleEntregaDAO },
