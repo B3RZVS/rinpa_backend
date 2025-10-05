@@ -5,12 +5,9 @@ import { EntregaEntity } from '../entities/entrega.entity';
 
 export interface EntregaIDAO {
   findAll(): Promise<EntregaEntity[]>;
-  create(
-    data: CreateEntrega,
-    detalles: CreateDetalleEntregaDTO[],
-  ): Promise<EntregaEntity>;
+  create(data: CreateEntrega): Promise<EntregaEntity>;
   update(id: number, data: UpdateEntregaDTO): Promise<EntregaEntity>;
   delete(id: number): Promise<void>;
 
-  // findById(id: number): Promise<EntregaEntity | null>;
+  findById(id: number): Promise<EntregaEntity | null>;
 }

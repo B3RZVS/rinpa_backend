@@ -12,9 +12,11 @@ import { ClienteModule } from '../cliente/cliente.module';
 import { UserModule } from '../user/user.module';
 import { DetalleEntregaController } from './controllers/detalle-entrega.controller';
 import { DetalleEntregaService } from './services/detalle-entrega.service';
+import { AuthModule } from '../auth/auth.module';
+import { EntregaValidator } from './validators/entrega.validator';
 
 @Module({
-  imports: [ClienteModule, UserModule],
+  imports: [ClienteModule, UserModule, AuthModule],
   controllers: [
     PrecioNaftaController,
     EntregaController,
@@ -28,6 +30,7 @@ import { DetalleEntregaService } from './services/detalle-entrega.service';
     { provide: 'PrecioNaftaIDAO', useClass: PrecioNaftaDAO },
 
     EntregaService,
+    EntregaValidator,
     EntregaDAO,
     { provide: 'EntregaIDAO', useClass: EntregaDAO },
 

@@ -22,4 +22,11 @@ export class AuthValidator {
 
     return user;
   }
+
+  async ensureExistsById(id: number) {
+    const user = await this.userDAO.findById(id);
+    if (!user) {
+      throw new ConflictException(`No existe el usuario proporcionado`);
+    }
+  }
 }

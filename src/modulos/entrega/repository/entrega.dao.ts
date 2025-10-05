@@ -38,24 +38,12 @@ export class EntregaDAO implements EntregaIDAO {
     return entregas.map((e) => EntregaMapper.toEntity(e));
   }
 
-  async create(
-    data: CreateEntrega,
-    detalles: CreateDetalleEntregaDTO[],
-  ): Promise<EntregaEntity> {
-    //Creo entrega
+  async create(data: CreateEntrega): Promise<EntregaEntity> {
+    //Crear entrega
     const createdEntrega = await this.prisma.entrega.create({
       data,
     });
-
-    //Creo detalles
-    await this.detalleDao.create(detalles, createdEntrega.id);
-
-    //recupero la entregas con los detalles
-    const entregaConDetalle = await this.findById(createdEntrega.id);
-
-    if (!entregaConDetalle)
-      throw new Error('Error al buscar la entrega recién creada');
-    return entregaConDetalle;
+    return EntregaMapper.toEntity(createdEntrega);
   }
 
   async update(id: number, data: UpdateEntregaDTO): Promise<EntregaEntity> {
