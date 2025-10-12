@@ -30,5 +30,6 @@ import { UserController } from './application/controllers/user-controller/user.c
 
     { provide: 'UserIDAO', useClass: UserDAO },
   ],
+  exports: [UserService],
 })
 export class UserModule {}

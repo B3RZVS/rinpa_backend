@@ -29,6 +29,6 @@ import { JwtStrategy } from './application/strategies/jwt.strategy';
     { provide: 'UserIDAO', useClass: UserDAO },
     JwtStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, AuthValidator],
 })
 export class AuthModule {}

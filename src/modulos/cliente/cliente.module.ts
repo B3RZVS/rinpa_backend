@@ -19,5 +19,6 @@ import { ClienteValidator } from './validators/cliente.validator';
       useClass: ClienteDAO,
     },
   ],
+  exports: [ClienteService, ClienteValidator],
 })
 export class ClienteModule {}

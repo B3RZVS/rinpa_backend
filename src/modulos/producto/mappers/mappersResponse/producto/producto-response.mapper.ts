@@ -1,6 +1,5 @@
 import { ProductoEntity } from 'src/modulos/producto/entities/producto.entity';
 import { GetProductoDTO } from '../../../dtos/producto/get-producto.dto';
-import { privateDecrypt } from 'crypto';
 
 export class ProductoResponseMapper {
   static toResponse(producto: ProductoEntity): GetProductoDTO {

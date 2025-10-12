@@ -15,7 +15,10 @@ export class ClienteService {
   async getAll(): Promise<ClienteEntity[]> {
     return await this.clienteDAO.findAll();
   }
-
+  async getById(id: number): Promise<ClienteEntity | null> {
+    await this.clienteValidator.ensureExistsById(id);
+    return this.clienteDAO.findById(id);
+  }
   async create(data: CreateClienteDTO): Promise<ClienteEntity> {
     await this.clienteValidator.ensureExistsByEmail(data.email);
     return this.clienteDAO.create(data);

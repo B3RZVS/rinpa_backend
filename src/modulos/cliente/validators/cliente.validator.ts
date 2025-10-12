@@ -1,6 +1,5 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { ClienteIDAO } from '../types/cliente.dao.interface';
-import { ResponseDto } from 'src/common/dto/response.dto';
 import { ClienteMappers } from '../mappers/cliente.mapper';
 
 @Injectable()
