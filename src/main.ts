@@ -17,6 +17,6 @@ async function bootstrap() {
 
   app.useGlobalFilters(app.get(AllExceptionsFilter)); // Registra el filtro de excepciones globalmente
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(8000, '0.0.0.0');
 }
 bootstrap();
