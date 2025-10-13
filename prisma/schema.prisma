@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TipoProducto {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+  productos Producto[]
+}
+model Unidad {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+  simbolo String
+  medidas Medida[]
+}
+model Medida {
+  id        Int    @id @default(autoincrement())
+  cantidad  Int
+  unidadId  Int
+  unidad    Unidad @relation(fields: [unidadId], references: [id])
+  @@unique([cantidad, unidadId], name: "Medida_cantidad_unidadId_unique")
+  productos Producto[]
+}
+
+model Rol {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  usuarios    Usuario[]
+}
+model Usuario {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  email       String    @unique
+  password    String
+  rolId       Int
+  rol         Rol       @relation(fields:[rolId],references:[id], onDelete: Restrict, onUpdate:Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([rolId])
+  entregas  Entrega[]
+}
+
+model Producto{
+  id             Int          @id @default(autoincrement())
+  descripcion    String
+  precio         Float
+  tipoProductoId Int
+  tipoProducto   TipoProducto @relation(fields: [tipoProductoId], references: [id])
+  medidaId       Int
+  medida         Medida       @relation(fields: [medidaId], references: [id])
+  detalles    DetalleEntrega[]
+}
+model Cliente{
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  telefono    String
+  email       String   @unique
+  descripcion String?  // opcional
+  direccion   String
+  isDeleted   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entregas  Entrega[]
+}
+
+model PrecioNafta {
+  id        Int       @id @default(autoincrement())
+  precio    Float
+  fechaInicio DateTime @default(now())
+  fechaFin   DateTime?
+
+  entregas  Entrega[]
+}
+
+model Entrega {
+  id          Int        @id @default(autoincrement())
+  fecha       DateTime   @default(now())
+  litrosGastados    Float
+
+  
+  clienteId     Int
+  cliente       Cliente      @relation(fields: [clienteId], references: [id])
+
+  precioNaftaId Int
+  precioNafta   PrecioNafta @relation(fields: [precioNaftaId], references: [id])
+
+  usuarioId     Int
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id])
+  
+  isDeleted   Boolean @default(false)
+  detalles    DetalleEntrega[]
+}
+
+model DetalleEntrega {
+  id            Int      @id @default(autoincrement())
+  cantidad      Int
+  precioUnitario Float
+  subTotal      Float
+
+  entregaId     Int
+  entrega       Entrega @relation(fields: [entregaId], references: [id])
+
+  productoId    Int
+  producto      Producto @relation(fields: [productoId], references: [id])
+}
