@@ -13,7 +13,15 @@ async function bootstrap() {
     }),
   ); //Esto es para validar en toda la app con los dto
 
-  app.enableCors(); //Habilita CORS para todas las rutas
+  app.enableCors({
+    origin: [
+      'https://rinpa.frontend.com',
+      'http://localhost:3000',
+      'http://localhost:5173',
+    ], // frontends permitidos
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // si necesitas enviar cookies
+  }); //Habilita CORS para todas las rutas
 
   app.useGlobalFilters(app.get(AllExceptionsFilter)); // Registra el filtro de excepciones globalmente
 
