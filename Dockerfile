@@ -10,7 +10,8 @@ RUN npm ci --omit=dev
 
 
 # Copia los archivos del proyecto
-COPY . .
+COPY dist ./dist
+COPY .env .env
 
 # Instala las dependencias
 RUN npm run build
