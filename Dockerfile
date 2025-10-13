@@ -6,15 +6,16 @@ WORKDIR /app
 
 # Instala dependencias del sistema necesarias para compilar paquetes
 COPY package*.json ./
-RUN npm ci --omit=dev
+
+# Instalar TODAS las dependencias (prod + dev) necesarias para build
+RUN npm install
 
 
-# Copia los archivos del proyecto
-COPY dist ./dist
-COPY .env .env
+# Copiar todo el código
+COPY . .
 
-# Instala las dependencias
-RUN npm run build
+# Compilar dentro del contenedor
+RUN npx nest build
 
 # Expone el puerto 
 EXPOSE 8000
