@@ -13,7 +13,8 @@ RUN npm install
 
 # Copiar todo el código
 COPY . .
-
+# Generar Prisma client
+RUN npx prisma generate
 # Compilar dentro del contenedor
 RUN npx nest build
 
