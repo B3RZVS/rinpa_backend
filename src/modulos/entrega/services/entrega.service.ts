@@ -22,6 +22,14 @@ export class EntregaService {
   async getAll(): Promise<EntregaEntity[]> {
     return await this.entregaDAO.findAll();
   }
+  async getById(id: number): Promise<EntregaEntity> {
+    const entregaConDetalle = await this.entregaDAO.findById(id);
+
+    if (!entregaConDetalle) {
+      throw new Error('Error al buscar la Entrega creada');
+    }
+    return entregaConDetalle;
+  }
 
   async create(data: CreateEntregaDTO): Promise<EntregaEntity> {
     const { detalles, ...entregaData } = data;

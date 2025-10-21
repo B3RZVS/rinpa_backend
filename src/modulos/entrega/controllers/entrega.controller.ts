@@ -49,6 +49,26 @@ export class EntregaController {
     return entregaResponse;
   }
 
+  @Get(':id')
+  async getEntregaById(@Param('id') id: number) {
+    const entrega = await this.entregaService.getById(id);
+
+    const cliente = await this.clienteService.getById(entrega.getClienteId());
+    const user = await this.userService.getById(entrega.getUsuarioId());
+    const precioNafta = await this.precioNaftaService.getById(
+      entrega.getPrecioNaftaId(),
+    );
+
+    const entregaResponse = EntregaResponseMapper.toResponse(
+      entrega,
+      cliente,
+      user,
+      precioNafta?.getPrecio() || null,
+    );
+
+    return entregaResponse;
+  }
+
   @Post()
   async crearEntrega(@Body() dto: CreateEntregaDTO) {
     const entrega = await this.entregaService.create(dto);
