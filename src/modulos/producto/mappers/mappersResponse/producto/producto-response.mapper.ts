@@ -6,9 +6,11 @@ export class ProductoResponseMapper {
     return {
       id: producto.getId(),
       precio: producto.getPrecio(),
-      decripcion: producto.getDescripcion(),
+      descripcion: producto.getDescripcion(),
       tipoProducto: producto.getTipoProductoNombre(),
+      tipoProductoId: producto.getTipoProductoId(),
       medida: producto.getMedidaNombreSimbolo(),
+      medidaId: producto.getMedidaId(),
     };
   }
 }

@@ -1,7 +1,9 @@
 export class GetProductoDTO {
   id: number;
   precio: number;
-  decripcion: string;
+  descripcion: string;
   tipoProducto: string;
+  tipoProductoId: number;
   medida: string;
+  medidaId: number;
 }

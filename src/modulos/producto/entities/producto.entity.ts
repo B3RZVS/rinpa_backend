@@ -28,8 +28,14 @@ export class ProductoEntity {
   getTipoProducto() {
     return this.tipoProducto;
   }
+  getTipoProductoId() {
+    return this.tipoProducto.getId();
+  }
   getMedida() {
     return this.medida;
+  }
+  getMedidaId() {
+    return this.medida.getId();
   }
   getPrecio() {
     return this.precio;
