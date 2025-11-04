@@ -11,6 +11,7 @@ export class ProductoDAO implements ProductoIDAO {
   //GET
   async findAll(): Promise<ProductoEntity[]> {
     const productos = await this.prisma.producto.findMany({
+      where: { isDeleted: false },
       include: {
         tipoProducto: true,
         medida: {
@@ -69,7 +70,10 @@ export class ProductoDAO implements ProductoIDAO {
 
   //DELETE
   async delete(id: number): Promise<void> {
-    await this.prisma.producto.delete({ where: { id } });
+    await this.prisma.producto.update({
+      where: { id },
+      data: { isDeleted: true },
+    });
   }
 
   //FINDById

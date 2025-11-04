@@ -38,6 +38,35 @@ export class EntregaDAO implements EntregaIDAO {
     return entregas.map((e) => EntregaMapper.toEntity(e));
   }
 
+  async findAllPaginated(
+    where: any,
+    skip: number,
+    take: number,
+  ): Promise<[EntregaEntity[], number]> {
+    const [entregas, total] = await Promise.all([
+      this.prisma.entrega.findMany({
+        where,
+        skip,
+        take,
+        include: {
+          detalles: {
+            include: {
+              producto: {
+                include: {
+                  tipoProducto: true,
+                  medida: { include: { unidad: true } },
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.entrega.count({ where }),
+    ]);
+
+    return [entregas.map((e) => EntregaMapper.toEntity(e)), total];
+  }
+
   async create(data: CreateEntrega): Promise<EntregaEntity> {
     //Crear entrega
     const createdEntrega = await this.prisma.entrega.create({

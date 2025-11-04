@@ -7,6 +7,8 @@ import { DetalleEntregaIDAO } from '../types/detalle.dao.interface';
 import { AuthValidator } from 'src/modulos/auth/application/validators/auth.validator';
 import { ClienteValidator } from 'src/modulos/cliente/validators/cliente.validator';
 import { EntregaValidator } from '../validators/entrega.validator';
+import { queryBuilder } from 'src/common/pagination/query-builder.util';
+import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 
 @Injectable()
 export class EntregaService {
@@ -22,6 +24,15 @@ export class EntregaService {
   async getAll(): Promise<EntregaEntity[]> {
     return await this.entregaDAO.findAll();
   }
+
+  async getAllPaginated(params: QueryParamsDto) {
+    return queryBuilder<EntregaEntity>(
+      (where, skip, take) =>
+        this.entregaDAO.findAllPaginated(where, skip, take),
+      params,
+    );
+  }
+
   async getById(id: number): Promise<EntregaEntity> {
     const entregaConDetalle = await this.entregaDAO.findById(id);
 

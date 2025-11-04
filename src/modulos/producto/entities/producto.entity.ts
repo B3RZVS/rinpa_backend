@@ -7,6 +7,7 @@ export class ProductoEntity {
   private descripcion: string;
   private tipoProducto: TipoProductoEntity;
   private medida: MedidaEntity;
+  private isDetele: boolean;
 
   constructor(
     id: number,
@@ -14,12 +15,14 @@ export class ProductoEntity {
     descripcion: string,
     tipoProducto: TipoProductoEntity,
     medida: MedidaEntity,
+    isDelete: boolean,
   ) {
     this.id = id;
     this.precio = precio;
     this.descripcion = descripcion;
     this.tipoProducto = tipoProducto;
     this.medida = medida;
+    this.isDetele = isDelete;
   }
 
   getId() {

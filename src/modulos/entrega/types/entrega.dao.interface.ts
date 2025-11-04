@@ -10,4 +10,9 @@ export interface EntregaIDAO {
   delete(id: number): Promise<void>;
 
   findById(id: number): Promise<EntregaEntity | null>;
+  findAllPaginated(
+    where: any,
+    skip: number,
+    take: number,
+  ): Promise<[EntregaEntity[], number]>;
 }
