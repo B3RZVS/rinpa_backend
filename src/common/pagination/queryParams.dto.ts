@@ -12,7 +12,7 @@ export class QueryParamsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  limit?: number = 10;
+  page_size?: number = 10;
 
   @IsOptional()
   search?: string;
