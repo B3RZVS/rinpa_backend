@@ -62,6 +62,7 @@ model Producto{
   medidaId       Int
   medida         Medida       @relation(fields: [medidaId], references: [id])
   detalles    DetalleEntrega[]
+  isDeleted   Boolean @default(false)
 }
 model Cliente{
   id          Int      @id @default(autoincrement())

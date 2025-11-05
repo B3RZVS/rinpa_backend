@@ -23,6 +23,7 @@ export class ProductoMapper {
       prisma.descripcion,
       tipoProducto,
       medida,
+      prisma.isDeleted,
     );
   }
 }
