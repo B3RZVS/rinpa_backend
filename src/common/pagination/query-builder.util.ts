@@ -14,14 +14,14 @@ export async function queryBuilder<T>(
 ): Promise<PaginatedResult<T>> {
   const {
     page = 1,
-    limit = 10,
+    page_size = 10,
     search,
     filters,
     filtersValues,
     baseWhere = {},
   } = options;
 
-  const skip = (page - 1) * limit;
+  const skip = (page - 1) * page_size;
 
   // --- Construcción dinámica del WHERE ---
   let where: any = { ...baseWhere };
@@ -33,15 +33,15 @@ export async function queryBuilder<T>(
   }
 
   // Ejecutar consulta y count
-  const [data, totalItems] = await queryFn(where, skip, limit);
+  const [data, totalItems] = await queryFn(where, skip, page_size);
 
   return {
     data,
     meta: {
       totalItems,
-      totalPages: Math.ceil(totalItems / limit),
+      totalPages: Math.ceil(totalItems / page_size),
       currentPage: page,
-      pageSize: limit,
+      page_size: page_size,
     },
   };
 }

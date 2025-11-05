@@ -1,13 +1,13 @@
 export interface PaginationParams {
   page?: number;
-  limit?: number;
+  page_size?: number;
 }
 
 export interface PaginationMeta {
   totalItems: number;
   totalPages: number;
   currentPage: number;
-  pageSize: number;
+  page_size: number;
 }
 export interface PaginatedResult<T> {
   data: T[];
@@ -16,18 +16,18 @@ export interface PaginatedResult<T> {
 
 export async function paginate<T>(
   queryFn: (skip: number, take: number) => Promise<[T[], number]>,
-  { page = 1, limit = 10 }: PaginationParams,
+  { page = 1, page_size = 10 }: PaginationParams,
 ): Promise<PaginatedResult<T>> {
-  const skip = (page - 1) * limit;
-  const [data, totalItems] = await queryFn(skip, limit);
+  const skip = (page - 1) * page_size;
+  const [data, totalItems] = await queryFn(skip, page_size);
 
   return {
     data,
     meta: {
       totalItems,
-      totalPages: Math.ceil(totalItems / limit),
+      totalPages: Math.ceil(totalItems / page_size),
       currentPage: page,
-      pageSize: limit,
+      page_size: page_size,
     },
   };
 }
