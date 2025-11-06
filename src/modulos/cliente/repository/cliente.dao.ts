@@ -60,4 +60,21 @@ export class ClienteDAO implements ClienteIDAO {
     });
     return cliente ? ClienteMappers.toEntity(cliente) : null;
   }
+
+  async findAllPaginated(
+    where: any,
+    skip: number,
+    take: number,
+  ): Promise<[ClienteEntity[], number]> {
+    const [clientes, total] = await Promise.all([
+      this.prisma.cliente.findMany({
+        skip,
+        take,
+        where: { isDeleted: false, ...where },
+      }),
+      this.prisma.entrega.count({ where }),
+    ]);
+
+    return [clientes.map((e) => ClienteMappers.toEntity(e)), total];
+  }
 }

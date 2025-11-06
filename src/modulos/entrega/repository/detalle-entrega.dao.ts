@@ -15,6 +15,10 @@ export class DetalleEntregaDAO implements DetalleEntregaIDAO {
       include: {
         producto: true,
       },
+      orderBy: {
+        id: 'desc',
+      },
+      take: 5,
     });
     return detalleEntregas.map((e) => DetalleEntregaMapper.toEntity(e));
   }

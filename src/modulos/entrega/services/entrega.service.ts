@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import { EntregaIDAO } from '../types/entrega.dao.interface';
 import { EntregaEntity } from '../entities/entrega.entity';
 import { CreateEntregaDTO } from '../dtos/entrega/create-entrega.dto';
@@ -37,7 +37,7 @@ export class EntregaService {
     const entregaConDetalle = await this.entregaDAO.findById(id);
 
     if (!entregaConDetalle) {
-      throw new Error('Error al buscar la Entrega creada');
+      throw new ConflictException(`Entrega con id ${id} no encontrada`);
     }
     return entregaConDetalle;
   }
@@ -54,22 +54,24 @@ export class EntregaService {
     const entrega = await this.entregaDAO.create(entregaData);
     //Creacion de los detalles
     await this.detalleEntregaDAO.create(detalles, entrega.getId());
-    //Obtener la entrega con los detalles
+    //Obtener la entrega con los detalles y relaciones
     const entregaConDetalle = await this.entregaDAO.findById(entrega.getId());
 
     if (!entregaConDetalle) {
-      throw new Error('Error al buscar la Entrega creada');
+      throw new ConflictException(
+        `Error al buscar la Entrega creada con id ${entrega.getId()}`,
+      );
     }
     return entregaConDetalle;
   }
 
   async update(id: number, data: UpdateEntregaDTO): Promise<EntregaEntity> {
-    this.entregaValidator.ensureExistsById(id);
+    await this.entregaValidator.ensureExistsById(id);
     return await this.entregaDAO.update(id, data);
   }
 
   async delete(id: number) {
-    this.entregaValidator.ensureExistsById(id);
+    await this.entregaValidator.ensureExistsById(id);
     await this.entregaDAO.delete(id);
   }
 }

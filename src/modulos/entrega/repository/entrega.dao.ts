@@ -18,6 +18,7 @@ export class EntregaDAO implements EntregaIDAO {
   async findAll(): Promise<EntregaEntity[]> {
     const entregas = await this.prisma.entrega.findMany({
       where: { isDeleted: false },
+      orderBy: { fecha: 'desc' },
       include: {
         detalles: {
           include: {
@@ -33,6 +34,13 @@ export class EntregaDAO implements EntregaIDAO {
             },
           },
         },
+        cliente: true,
+        usuario: {
+          include: {
+            rol: true,
+          },
+        },
+        precioNafta: true,
       },
     });
     return entregas.map((e) => EntregaMapper.toEntity(e));
@@ -43,9 +51,11 @@ export class EntregaDAO implements EntregaIDAO {
     skip: number,
     take: number,
   ): Promise<[EntregaEntity[], number]> {
+    const whereClause = { isDeleted: false, ...where };
     const [entregas, total] = await Promise.all([
       this.prisma.entrega.findMany({
-        where,
+        where: whereClause,
+        orderBy: { fecha: 'desc' },
         skip,
         take,
         include: {
@@ -59,9 +69,16 @@ export class EntregaDAO implements EntregaIDAO {
               },
             },
           },
+          cliente: true,
+          usuario: {
+            include: {
+              rol: true,
+            },
+          },
+          precioNafta: true,
         },
       }),
-      this.prisma.entrega.count({ where }),
+      this.prisma.entrega.count({ where: whereClause }),
     ]);
 
     return [entregas.map((e) => EntregaMapper.toEntity(e)), total];
@@ -111,6 +128,13 @@ export class EntregaDAO implements EntregaIDAO {
             },
           },
         },
+        cliente: true,
+        usuario: {
+          include: {
+            rol: true,
+          },
+        },
+        precioNafta: true,
       },
     });
     return exits ? EntregaMapper.toEntity(exits) : null;

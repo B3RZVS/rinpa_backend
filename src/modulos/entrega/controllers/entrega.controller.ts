@@ -9,9 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { EntregaService } from '../services/entrega.service';
-import { ClienteService } from 'src/modulos/cliente/services/cliente.service';
-import { UserService } from 'src/modulos/user/application/services/user-service/user.service';
-import { PrecioNaftaService } from '../services/precio-nafta.service';
 import { EntregaResponseMapper } from '../mappers/mappers-response/entrega-responde.mapper';
 import { CreateEntregaDTO } from '../dtos/entrega/create-entrega.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
@@ -21,55 +18,39 @@ import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 
 @Controller('entrega')
 export class EntregaController {
-  constructor(
-    private readonly entregaService: EntregaService,
-    private readonly clienteService: ClienteService,
-    private readonly userService: UserService,
-    private readonly precioNaftaService: PrecioNaftaService,
-  ) {}
+  constructor(private readonly entregaService: EntregaService) {}
 
   @Get()
   async getEntregas() {
     const entregas = await this.entregaService.getAll();
-    const entregaResponse: GetEntregaDTO[] = [];
-    for (const entrega of entregas) {
-      const cliente = await this.clienteService.getById(entrega.getClienteId());
-      const user = await this.userService.getById(entrega.getUsuarioId());
-      const precioNafta = await this.precioNaftaService.getById(
-        entrega.getPrecioNaftaId(),
-      );
+    return entregas.map((entrega) => {
+      const cliente = entrega.getCliente();
+      const usuario = entrega.getUsuario();
+      const precioNafta = entrega.getPrecioNafta();
 
-      entregaResponse.push(
-        EntregaResponseMapper.toResponse(
-          entrega,
-          cliente,
-          user,
-          precioNafta?.getPrecio() || null,
-        ),
+      return EntregaResponseMapper.toResponse(
+        entrega,
+        cliente || null,
+        usuario || null,
+        precioNafta?.getPrecio() || null,
       );
-    }
-    return entregaResponse;
+    });
   }
   @Get('paginated')
   async getPaginatedEntregas(@Query() query: QueryParamsDto) {
     const paginated = await this.entregaService.getAllPaginated(query);
-    const entregaResponse = await Promise.all(
-      paginated.data.map(async (entrega) => {
-        const cliente = await this.clienteService.getById(
-          entrega.getClienteId(),
-        );
-        const user = await this.userService.getById(entrega.getUsuarioId());
-        const precioNafta = await this.precioNaftaService.getById(
-          entrega.getPrecioNaftaId(),
-        );
-        return EntregaResponseMapper.toResponse(
-          entrega,
-          cliente,
-          user,
-          precioNafta?.getPrecio() || null,
-        );
-      }),
-    );
+    const entregaResponse = paginated.data.map((entrega) => {
+      const cliente = entrega.getCliente();
+      const usuario = entrega.getUsuario();
+      const precioNafta = entrega.getPrecioNafta();
+
+      return EntregaResponseMapper.toResponse(
+        entrega,
+        cliente || null,
+        usuario || null,
+        precioNafta?.getPrecio() || null,
+      );
+    });
 
     return { data: entregaResponse, meta: paginated.meta };
   }
@@ -77,42 +58,53 @@ export class EntregaController {
   @Get(':id')
   async getEntregaById(@Param('id') id: number) {
     const entrega = await this.entregaService.getById(id);
+    const cliente = entrega.getCliente();
+    const usuario = entrega.getUsuario();
+    const precioNafta = entrega.getPrecioNafta();
 
-    const cliente = await this.clienteService.getById(entrega.getClienteId());
-    const user = await this.userService.getById(entrega.getUsuarioId());
-    const precioNafta = await this.precioNaftaService.getById(
-      entrega.getPrecioNaftaId(),
-    );
-
-    const entregaResponse = EntregaResponseMapper.toResponse(
+    return EntregaResponseMapper.toResponse(
       entrega,
-      cliente,
-      user,
+      cliente || null,
+      usuario || null,
       precioNafta?.getPrecio() || null,
     );
-
-    return entregaResponse;
   }
 
   @Post()
   async crearEntrega(@Body() dto: CreateEntregaDTO) {
     const entrega = await this.entregaService.create(dto);
+    const cliente = entrega.getCliente();
+    const usuario = entrega.getUsuario();
+    const precioNafta = entrega.getPrecioNafta();
 
     return new ResponseDto(
       true,
       'Entrega creada con éxito',
-      EntregaResponseMapper.toResponse(entrega),
+      EntregaResponseMapper.toResponse(
+        entrega,
+        cliente || null,
+        usuario || null,
+        precioNafta?.getPrecio() || null,
+      ),
     );
   }
 
   @Put(':id')
   async updateEntrega(@Param('id') id: number, @Body() dto: UpdateEntregaDTO) {
     const entrega = await this.entregaService.update(id, dto);
+    const cliente = entrega.getCliente();
+    const usuario = entrega.getUsuario();
+    const precioNafta = entrega.getPrecioNafta();
 
     return new ResponseDto(
       true,
       'Entrega actualizada con Exito',
-      EntregaResponseMapper.toResponse(entrega),
+      EntregaResponseMapper.toResponse(
+        entrega,
+        cliente || null,
+        usuario || null,
+        precioNafta?.getPrecio() || null,
+      ),
     );
   }
 

@@ -1,4 +1,7 @@
 import { DetalleEntregaEntity } from './detalleEntrega.entity';
+import { ClienteEntity } from 'src/modulos/cliente/entities/cliente.entity';
+import { UserEntity } from 'src/modulos/user/domain/entities/user-entity/user.entity';
+import { PrecioNaftaEntity } from './precioNafta.entity';
 
 export class EntregaEntity {
   constructor(
@@ -10,6 +13,9 @@ export class EntregaEntity {
     private litrosGastados: number,
     private isDelete: boolean,
     private detalles: DetalleEntregaEntity[],
+    private cliente?: ClienteEntity | null,
+    private usuario?: UserEntity | null,
+    private precioNafta?: PrecioNaftaEntity | null,
   ) {}
 
   getId() {
@@ -39,5 +45,17 @@ export class EntregaEntity {
   }
   getIsDelete() {
     return this.isDelete;
+  }
+
+  getCliente() {
+    return this.cliente;
+  }
+
+  getUsuario() {
+    return this.usuario;
+  }
+
+  getPrecioNafta() {
+    return this.precioNafta;
   }
 }
