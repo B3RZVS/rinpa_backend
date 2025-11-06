@@ -11,4 +11,9 @@ export interface ClienteIDAO {
   findByEmail(email: string): Promise<ClienteEntity | null>;
 
   findById(id: number): Promise<ClienteEntity | null>;
+  findAllPaginated(
+    where: any,
+    skip: number,
+    take: number,
+  ): Promise<[ClienteEntity[], number]>;
 }

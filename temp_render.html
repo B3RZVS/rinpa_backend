@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Render</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h1 { border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #3498db;
+            margin: 1em 0;
+            padding-left: 1em;
+            color: #555;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 2em 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .pz-root { position: relative; overflow: hidden; background: transparent; }
+        .pz-viewport { transform-origin: 0 0; will-change: transform; display: inline-block; }
+        .pz-wrapper { display: inline-block; }
+        .zoom-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .zoom-controls button {
+            background: #2c3e50;
+            color: #ffffff;
+            border: 0;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .zoom-controls button:hover { 
+            background: #34495e; 
+        }
+        .zoom-controls button:active { 
+            background: #1a252f; 
+            transform: scale(0.95);
+        }
+        ul, ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+        li {
+            margin: 0.5em 0;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #bdc3c7;
+            margin: 2em 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arquitectura del Sistema RINPA Backend</h1>
+<p>Este documento describe la arquitectura completa del sistema RINPA Backend, mostrando las distintas capas, módulos y sus interacciones.</p>
+<h2>Diagrama de Arquitectura General</h2>
+<div class="mermaid">graph TB
+    subgraph "Capa de Presentación - HTTP/API"
+        HTTP[Cliente HTTP<br/>Frontend/Postman]
+        CORS[CORS Middleware]
+        VALIDATION[ValidationPipe<br/>class-validator]
+        EXCEPTION[AllExceptionsFilter<br/>Manejo Global de Errores]
+    end
+
+    subgraph "Capa de Controladores - Controllers"
+        AUTH_CTRL[AuthController<br/>Autenticación]
+        USER_CTRL[UserController<br/>Usuarios]
+        CLIENTE_CTRL[ClienteController<br/>Clientes]
+        PRODUCTO_CTRL[ProductoController<br/>Productos]
+        ENTREGA_CTRL[EntregaController<br/>Entregas]
+        PRECIO_CTRL[PrecioNaftaController<br/>Precios]
+    end
+
+    subgraph "Capa de Servicios - Services"
+        AUTH_SVC[AuthService<br/>Lógica de Auth]
+        USER_SVC[UserService<br/>Gestión Usuarios]
+        CLIENTE_SVC[ClienteService<br/>Gestión Clientes]
+        PRODUCTO_SVC[ProductoService<br/>Gestión Productos]
+        ENTREGA_SVC[EntregaService<br/>Gestión Entregas]
+        PRECIO_SVC[PrecioNaftaService<br/>Gestión Precios]
+    end
+
+    subgraph "Capa de Validación - Validators"
+        AUTH_VAL[AuthValidator]
+        USER_VAL[UserValidator]
+        CLIENTE_VAL[ClienteValidator]
+        PRODUCTO_VAL[ProductoValidator]
+        ENTREGA_VAL[EntregaValidator]
+    end
+
+    subgraph "Capa de Acceso a Datos - DAOs"
+        USER_DAO[UserDAO<br/>RolDAO]
+        CLIENTE_DAO[ClienteDAO]
+        PRODUCTO_DAO[ProductoDAO<br/>TipoProductoDAO<br/>MedidaDAO<br/>UnidadDAO]
+        ENTREGA_DAO[EntregaDAO<br/>DetalleEntregaDAO<br/>PrecioNaftaDAO]
+    end
+
+    subgraph "Capa de Transformación - Mappers"
+        USER_MAP[UserMapper<br/>RolMapper]
+        CLIENTE_MAP[ClienteMapper]
+        PRODUCTO_MAP[ProductoMapper<br/>TipoProductoMapper<br/>MedidaMapper<br/>UnidadMapper]
+        ENTREGA_MAP[EntregaMapper<br/>DetalleEntregaMapper<br/>PrecioNaftaMapper]
+    end
+
+    subgraph "Capa de Entidades - Entities"
+        USER_ENT[UserEntity<br/>RolEntity]
+        CLIENTE_ENT[ClienteEntity]
+        PRODUCTO_ENT[ProductoEntity<br/>TipoProductoEntity<br/>MedidaEntity<br/>UnidadEntity]
+        ENTREGA_ENT[EntregaEntity<br/>DetalleEntregaEntity<br/>PrecioNaftaEntity]
+    end
+
+    subgraph "Capa de Persistencia - ORM"
+        PRISMA[PrismaService<br/>ORM Client]
+        PRISMA_SCHEMA[Prisma Schema<br/>Modelos]
+    end
+
+    subgraph "Base de Datos"
+        POSTGRES[(PostgreSQL<br/>Base de Datos)]
+    end
+
+    subgraph "Componentes Transversales"
+        JWT[JWT Strategy<br/>Passport]
+        CONFIG[ConfigModule<br/>Variables de Entorno]
+        PAGINATION[Pagination Utils<br/>query-builder]
+    end
+
+    %% Flujo principal HTTP → Controllers
+    HTTP --> CORS
+    CORS --> VALIDATION
+    VALIDATION --> EXCEPTION
+    EXCEPTION --> AUTH_CTRL
+    EXCEPTION --> USER_CTRL
+    EXCEPTION --> CLIENTE_CTRL
+    EXCEPTION --> PRODUCTO_CTRL
+    EXCEPTION --> ENTREGA_CTRL
+    EXCEPTION --> PRECIO_CTRL
+
+    %% Controllers → Services
+    AUTH_CTRL --> AUTH_SVC
+    USER_CTRL --> USER_SVC
+    CLIENTE_CTRL --> CLIENTE_SVC
+    PRODUCTO_CTRL --> PRODUCTO_SVC
+    ENTREGA_CTRL --> ENTREGA_SVC
+    PRECIO_CTRL --> PRECIO_SVC
+
+    %% Services → Validators
+    AUTH_SVC --> AUTH_VAL
+    USER_SVC --> USER_VAL
+    CLIENTE_SVC --> CLIENTE_VAL
+    PRODUCTO_SVC --> PRODUCTO_VAL
+    ENTREGA_SVC --> ENTREGA_VAL
+
+    %% Services → DAOs
+    AUTH_SVC --> USER_DAO
+    USER_SVC --> USER_DAO
+    CLIENTE_SVC --> CLIENTE_DAO
+    PRODUCTO_SVC --> PRODUCTO_DAO
+    ENTREGA_SVC --> ENTREGA_DAO
+    PRECIO_SVC --> ENTREGA_DAO
+
+    %% DAOs → Mappers
+    USER_DAO --> USER_MAP
+    CLIENTE_DAO --> CLIENTE_MAP
+    PRODUCTO_DAO --> PRODUCTO_MAP
+    ENTREGA_DAO --> ENTREGA_MAP
+
+    %% Mappers → Entities
+    USER_MAP --> USER_ENT
+    CLIENTE_MAP --> CLIENTE_ENT
+    PRODUCTO_MAP --> PRODUCTO_ENT
+    ENTREGA_MAP --> ENTREGA_ENT
+
+    %% DAOs → Prisma
+    USER_DAO --> PRISMA
+    CLIENTE_DAO --> PRISMA
+    PRODUCTO_DAO --> PRISMA
+    ENTREGA_DAO --> PRISMA
+
+    %% Prisma → PostgreSQL
+    PRISMA --> PRISMA_SCHEMA
+    PRISMA_SCHEMA --> POSTGRES
+
+    %% Componentes transversales
+    AUTH_SVC --> JWT
+    AUTH_CTRL --> JWT
+    ENTREGA_SVC --> CLIENTE_SVC
+    ENTREGA_SVC --> USER_SVC
+    ENTREGA_SVC --> PAGINATION
+    CLIENTE_SVC --> PAGINATION
+    PRODUCTO_SVC --> PAGINATION
+    CONFIG --> PRISMA
+    CONFIG --> JWT
+
+    %% Estilos
+    classDef controller fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#fff
+    classDef service fill:#50C878,stroke:#2E7D4E,stroke-width:2px,color:#fff
+    classDef dao fill:#FF6B6B,stroke:#C92A2A,stroke-width:2px,color:#fff
+    classDef entity fill:#FFA500,stroke:#CC8500,stroke-width:2px,color:#fff
+    classDef database fill:#9B59B6,stroke:#6C3483,stroke-width:2px,color:#fff
+    classDef middleware fill:#3498DB,stroke:#21618C,stroke-width:2px,color:#fff
+
+    class AUTH_CTRL,USER_CTRL,CLIENTE_CTRL,PRODUCTO_CTRL,ENTREGA_CTRL,PRECIO_CTRL controller
+    class AUTH_SVC,USER_SVC,CLIENTE_SVC,PRODUCTO_SVC,ENTREGA_SVC,PRECIO_SVC service
+    class USER_DAO,CLIENTE_DAO,PRODUCTO_DAO,ENTREGA_DAO dao
+    class USER_ENT,CLIENTE_ENT,PRODUCTO_ENT,ENTREGA_ENT entity
+    class POSTGRES database
+    class CORS,VALIDATION,EXCEPTION,JWT,CONFIG middleware</div><h2>Descripción de Capas</h2>
+<h3>1. Capa de Presentación (HTTP/API)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Manejo de peticiones HTTP entrantes</li>
+<li><strong>Componentes</strong>:
+<ul>
+<li>CORS Middleware: Control de acceso cross-origin</li>
+<li>ValidationPipe: Validación automática de DTOs usando class-validator</li>
+<li>AllExceptionsFilter: Captura y formatea todas las excepciones</li>
+</ul>
+</li>
+</ul>
+<h3>2. Capa de Controladores (Controllers)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Recepción de peticiones HTTP y enrutamiento</li>
+<li><strong>Módulos</strong>:
+<ul>
+<li><strong>Auth</strong>: Autenticación y generación de tokens JWT</li>
+<li><strong>User</strong>: Gestión de usuarios y roles</li>
+<li><strong>Cliente</strong>: CRUD de clientes</li>
+<li><strong>Producto</strong>: Gestión de productos, tipos, medidas y unidades</li>
+<li><strong>Entrega</strong>: Gestión de entregas, detalles y precios de nafta</li>
+</ul>
+</li>
+</ul>
+<h3>3. Capa de Servicios (Services)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Lógica de negocio y orquestación</li>
+<li><strong>Características</strong>:
+<ul>
+<li>Validación de reglas de negocio</li>
+<li>Coordinación entre DAOs</li>
+<li>Transformación de datos cuando es necesario</li>
+</ul>
+</li>
+</ul>
+<h3>4. Capa de Validación (Validators)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Validación de reglas de negocio específicas</li>
+<li><strong>Ejemplos</strong>:
+<ul>
+<li>Verificar existencia de entidades relacionadas</li>
+<li>Validar unicidad de campos</li>
+<li>Validar estados y transiciones</li>
+</ul>
+</li>
+</ul>
+<h3>5. Capa de Acceso a Datos (DAOs)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Abstracción del acceso a datos</li>
+<li><strong>Patrón</strong>: Repository Pattern</li>
+<li><strong>Características</strong>:
+<ul>
+<li>Interfaces (IDAO) para desacoplamiento</li>
+<li>Implementaciones específicas de Prisma</li>
+<li>Inclusión de relaciones para evitar N+1</li>
+</ul>
+</li>
+</ul>
+<h3>6. Capa de Transformación (Mappers)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Transformación entre modelos de datos</li>
+<li><strong>Tipos</strong>:
+<ul>
+<li><strong>DAO Mappers</strong>: Prisma Models → Entities</li>
+<li><strong>Response Mappers</strong>: Entities → DTOs de respuesta</li>
+</ul>
+</li>
+</ul>
+<h3>7. Capa de Entidades (Entities)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Representación del dominio</li>
+<li><strong>Características</strong>:
+<ul>
+<li>Encapsulación de lógica de dominio</li>
+<li>Getters/Setters controlados</li>
+<li>Relaciones opcionales para optimización</li>
+</ul>
+</li>
+</ul>
+<h3>8. Capa de Persistencia (ORM)</h3>
+<ul>
+<li><strong>Responsabilidad</strong>: Abstracción de la base de datos</li>
+<li><strong>Tecnología</strong>: Prisma ORM</li>
+<li><strong>Características</strong>:
+<ul>
+<li>Type-safe queries</li>
+<li>Migrations automáticas</li>
+<li>Schema centralizado</li>
+</ul>
+</li>
+</ul>
+<h3>9. Base de Datos</h3>
+<ul>
+<li><strong>Tecnología</strong>: PostgreSQL</li>
+<li><strong>Características</strong>:
+<ul>
+<li>Relaciones bien definidas</li>
+<li>Soft delete implementado</li>
+<li>Índices en campos críticos</li>
+</ul>
+</li>
+</ul>
+<h2>Componentes Transversales</h2>
+<h3>JWT Strategy</h3>
+<ul>
+<li>Autenticación basada en tokens</li>
+<li>Integración con Passport</li>
+<li>Protección de rutas mediante guards</li>
+</ul>
+<h3>ConfigModule</h3>
+<ul>
+<li>Gestión centralizada de configuración</li>
+<li>Variables de entorno</li>
+<li>Validación de configuración</li>
+</ul>
+<h3>Pagination Utils</h3>
+<ul>
+<li>Utilidades reutilizables para paginación</li>
+<li>Soporte para filtros dinámicos</li>
+<li>Query builder genérico</li>
+</ul>
+<h2>Flujo de Datos Típico</h2>
+<ol>
+<li><strong>Request HTTP</strong> → Cliente envía petición</li>
+<li><strong>Middleware</strong> → CORS, validación, manejo de errores</li>
+<li><strong>Controller</strong> → Recibe petición, extrae parámetros</li>
+<li><strong>Service</strong> → Ejecuta lógica de negocio</li>
+<li><strong>Validator</strong> → Valida reglas de negocio</li>
+<li><strong>DAO</strong> → Consulta datos usando Prisma</li>
+<li><strong>Mapper</strong> → Transforma Prisma Model → Entity</li>
+<li><strong>Service</strong> → Retorna Entity</li>
+<li><strong>Mapper</strong> → Transforma Entity → Response DTO</li>
+<li><strong>Controller</strong> → Retorna respuesta HTTP</li>
+</ol>
+<h2>Dependencias entre Módulos</h2>
+<div class="mermaid">graph LR
+    AUTH[Auth Module] --> USER[User Module]
+    ENTREGA[Entrega Module] --> CLIENTE[Cliente Module]
+    ENTREGA --> USER
+    ENTREGA --> AUTH
+    PRODUCTO[Producto Module] --> |Independiente|
+    CLIENTE --> |Independiente|
+    USER --> |Independiente|</div><h2>Notas de Arquitectura</h2>
+<h3>Patrones Implementados</h3>
+<ul>
+<li><strong>Layered Architecture</strong>: Separación clara de responsabilidades</li>
+<li><strong>Repository Pattern</strong>: Abstracción del acceso a datos</li>
+<li><strong>Dependency Injection</strong>: Desacoplamiento mediante interfaces</li>
+<li><strong>DTO Pattern</strong>: Separación entre modelos de dominio y transferencia</li>
+<li><strong>Mapper Pattern</strong>: Transformación centralizada de datos</li>
+</ul>
+<h3>Optimizaciones Aplicadas</h3>
+<ul>
+<li><strong>Módulo Entrega</strong>: Eliminado problema N+1 mediante includes de Prisma</li>
+<li><strong>Paginación</strong>: Implementada en módulos principales</li>
+<li><strong>Soft Delete</strong>: Mantiene historial sin borrar físicamente</li>
+</ul>
+<h3>Inconsistencias Identificadas</h3>
+<ul>
+<li><strong>Módulo User</strong>: Implementa DDD (Domain-Driven Design) parcialmente</li>
+<li><strong>Resto de módulos</strong>: Usan arquitectura en capas simple</li>
+<li><strong>Recomendación</strong>: Estandarizar arquitectura o documentar decisión</li>
+</ul>
+<h2>Referencias</h2>
+<ul>
+<li><a href="../project_review.md">Revisión Completa del Proyecto</a></li>
+<li><a href="../active_context.md">Contexto Activo</a></li>
+<li><a href="https://docs.nestjs.com/">Documentación de NestJS</a></li>
+<li><a href="https://www.prisma.io/docs">Documentación de Prisma</a></li>
+</ul>
+
+    </div>
+
+    <!-- Mermaid.js + svg-pan-zoom -->
+    <script type="module">
+        import mermaid from 'https://cdn.skypack.dev/mermaid@10.6.1';
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'arial',
+            fontSize: 14
+        });
+
+        // Renderizar todos los diagramas Mermaid y habilitar pan/zoom con svg-pan-zoom
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+
+            // Cargar svg-pan-zoom (UMD) desde CDN
+            function loadSvgPanZoom() {
+                return new Promise(function(resolve, reject) {
+                    if (window.svgPanZoom) return resolve();
+                    const s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js';
+                    s.onload = () => resolve();
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+            }
+
+            // Función para añadir controles DESPUÉS de que Mermaid termine completamente
+            function setupPanZoomOnce() {
+                document.querySelectorAll('.mermaid svg').forEach(function(svg) {
+                    // Verificar si ya tiene controles o ya fue procesado
+                    var container = svg.closest('.mermaid');
+                    if (!container) return;
+                    
+                    if (svg.dataset.panZoomEnabled === 'complete') return;
+                    
+                    // Verificar que el SVG tenga contenido completo (no solo placeholder)
+                    if (svg.querySelector('g.root') || svg.querySelector('g.nodes')) {
+                        loadSvgPanZoom().then(function() {
+                            if (svg.dataset.panZoomEnabled === 'complete') return;
+                            try {
+                                // Ajustes básicos de tamaño
+                                svg.removeAttribute('width');
+                                svg.removeAttribute('height');
+                                svg.style.width = '100%';
+                                svg.style.minHeight = '400px';
+                                svg.style.height = 'auto';
+
+                                // Inicializar svg-pan-zoom (sin controles nativos para evitar duplicados)
+                                var panZoomInstance = window.svgPanZoom(svg, {
+                                    zoomEnabled: true,
+                                    controlIconsEnabled: false,
+                                    fit: true,
+                                    center: true,
+                                    minZoom: 0.2,
+                                    maxZoom: 10,
+                                    dblClickZoomEnabled: true,
+                                });
+                                // Guardar la instancia en el SVG para acceso posterior
+                                svg._panZoomInstance = panZoomInstance;
+                                svg.dataset.panZoomEnabled = 'complete';
+                                ensureControls(container, svg); // añade nuestros +/-/reset por consistencia
+                            } catch (e) {
+                                console.error('svg-pan-zoom init error:', e);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Usar MutationObserver para detectar cuando Mermaid termina de renderizar
+            var processedContainers = new Set();
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1 && node.tagName === 'SVG') {
+                                var container = node.closest('.mermaid');
+                                if (container && !processedContainers.has(container)) {
+                                    processedContainers.add(container);
+                                    setTimeout(function() {
+                                        if (!node.dataset.panZoomEnabled || node.dataset.panZoomEnabled !== 'complete') {
+                                            loadSvgPanZoom().then(function(){
+                                                try {
+                                                    node.removeAttribute('width');
+                                                    node.removeAttribute('height');
+                                                    node.style.width = '100%';
+                                                    node.style.minHeight = '400px';
+                                                    node.style.height = 'auto';
+                                                    var panZoomInstance = window.svgPanZoom(node, {
+                                                        zoomEnabled: true,
+                                                        controlIconsEnabled: false,
+                                                        fit: true,
+                                                        center: true,
+                                                        minZoom: 0.2,
+                                                        maxZoom: 10,
+                                                        dblClickZoomEnabled: true
+                                                    });
+                                                    // Guardar la instancia en el SVG para acceso posterior
+                                                    node._panZoomInstance = panZoomInstance;
+                                                    node.dataset.panZoomEnabled = 'complete';
+                                                    ensureControls(node.closest('.mermaid'), node);
+                                                } catch (e) {
+                                                    console.error('svg-pan-zoom init error:', e);
+                                                }
+                                            });
+                                        }
+                                    }, 200);
+                                }
+                            }
+                        });
+                    }
+                });
+                setupPanZoomOnce();
+            });
+            
+            // Observar todos los contenedores
+            document.querySelectorAll('.mermaid').forEach(function(container) {
+                observer.observe(container, { 
+                    childList: true, 
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['data-processed']
+                });
+            });
+            
+            // Intentos periódicos para casos donde el observer no detecte
+            var attempts = 0;
+            var interval = setInterval(function() {
+                attempts++;
+                setupPanZoomOnce();
+                if (attempts > 20 || document.querySelectorAll('.mermaid svg').length > 0) {
+                    clearInterval(interval);
+                }
+            }, 200);
+            
+            // Limpiar después de 5 segundos
+            setTimeout(function() {
+                clearInterval(interval);
+                observer.disconnect();
+                setupPanZoomOnce();
+            }, 5000);
+        });
+
+        // Función para crear/actualizar controles (usará svg-pan-zoom internamente)
+        function ensureControls(container, svg) {
+                var existingControls = container.querySelector('.zoom-controls');
+                if (existingControls) return existingControls;
+                
+                var controls = document.createElement('div');
+                controls.className = 'zoom-controls';
+                controls.setAttribute('data-zoom-controls', 'true');
+                controls.innerHTML = '<button data-act="in" title="Zoom In">+</button><button data-act="out" title="Zoom Out">−</button><button data-act="reset" title="Reset Zoom">⟲</button>';
+                container.style.position = 'relative';
+                container.appendChild(controls);
+
+                controls.addEventListener('click', function(ev) {
+                    var act = ev.target.getAttribute('data-act');
+                    if (!act) return;
+                    // Usar la instancia guardada en el SVG
+                    var api = svg && svg._panZoomInstance ? svg._panZoomInstance : null;
+                    if (!api) {
+                        console.warn('PanZoom API no disponible');
+                        return;
+                    }
+                    if (act === 'in') api.zoomIn();
+                    if (act === 'out') api.zoomOut();
+                    if (act === 'reset') { 
+                        api.resetZoom();
+                        api.center();
+                        api.fit();
+                    }
+                });
+                
+                return controls;
+            }
+            
+            // Nota: los controles se añaden durante la inicialización del pan/zoom
+            // (sin acciones adicionales)
+    </script>
+</body>
+</html>

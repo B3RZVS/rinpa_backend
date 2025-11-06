@@ -4,6 +4,8 @@ import { ClienteValidator } from '../validators/cliente.validator';
 import { ClienteEntity } from '../entities/cliente.entity';
 import { CreateClienteDTO } from '../dtos/CreateCliente.dto';
 import { UpdateClienteDTO } from '../dtos/UpdateCliente.dto';
+import { queryBuilder } from 'src/common/pagination/query-builder.util';
+import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 
 @Injectable()
 export class ClienteService {
@@ -14,6 +16,13 @@ export class ClienteService {
 
   async getAll(): Promise<ClienteEntity[]> {
     return await this.clienteDAO.findAll();
+  }
+  async getAllPaginated(params: QueryParamsDto) {
+    return queryBuilder<ClienteEntity>(
+      (where, skip, take) =>
+        this.clienteDAO.findAllPaginated(where, skip, take),
+      params,
+    );
   }
   async getById(id: number): Promise<ClienteEntity | null> {
     await this.clienteValidator.ensureExistsById(id);

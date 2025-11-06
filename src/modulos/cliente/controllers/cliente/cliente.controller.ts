@@ -7,12 +7,14 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ClienteService } from '../../services/cliente.service';
 import { ClienteMappers } from '../../mappers/cliente.mapper';
 import { CreateClienteDTO } from '../../dtos/CreateCliente.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { UpdateClienteDTO } from '../../dtos/UpdateCliente.dto';
+import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 
 @Controller('cliente')
 export class ClienteController {
@@ -22,6 +24,18 @@ export class ClienteController {
   async GetClientes() {
     const clientes = await this.clienteService.getAll();
     return clientes.map(ClienteMappers.toResponse);
+  }
+
+  @Get('paginated')
+  async getPaginatedClientes(@Query() query: QueryParamsDto) {
+    const paginated = await this.clienteService.getAllPaginated(query);
+    const clienteResponse = await Promise.all(
+      paginated.data.map(async (cliente) => {
+        return ClienteMappers.toResponse(cliente);
+      }),
+    );
+
+    return { data: clienteResponse, meta: paginated.meta };
   }
 
   @Post()
