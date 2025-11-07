@@ -15,7 +15,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'https://rinpa.frontend.com',
+      'https://rinpa.systemsbinary.com',
       'http://localhost:3000',
       'http://localhost:5173',
     ], // frontends permitidos
