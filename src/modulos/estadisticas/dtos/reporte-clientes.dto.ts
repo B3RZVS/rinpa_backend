@@ -1,13 +1,10 @@
 import { IsOptional, IsDateString } from 'class-validator';
 
 export class GetReporteClientesDto {
-  @IsOptional()
   @IsDateString()
-  fechaInicio?: string;
-
-  @IsOptional()
+  fechaInicio: string;
   @IsDateString()
-  fechaFin?: string;
+  fechaFin: string;
 }
 
 export interface ClienteReporte {

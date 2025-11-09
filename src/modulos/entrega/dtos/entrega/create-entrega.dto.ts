@@ -20,6 +20,7 @@ export class CreateEntregaDTO {
   @Type(() => CreateDetalleEntregaDTO)
   detalles: CreateDetalleEntregaDTO[];
 }
+
 export class CreateEntrega {
   @IsNumber()
   clienteId: number;
