@@ -10,6 +10,7 @@ import { EntregaValidator } from '../validators/entrega.validator';
 import { queryBuilder } from 'src/common/pagination/query-builder.util';
 import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
+import { fechaEntregaActual } from '../utils/fechaActual';
 
 @Injectable()
 export class EntregaService {
@@ -51,6 +52,10 @@ export class EntregaService {
     //Validacion de cliente
     await this.clienteValidator.ensureExistsById(entregaData.clienteId);
 
+    // Obtiene la hora local de Argentina
+    const fechaArgentina = fechaEntregaActual(entregaData);
+    // Reemplazamos la fecha en el DTO antes de guardar
+    entregaData.fecha = fechaArgentina;
     //Creacion de la entrega
     const entrega = await this.entregaDAO.create(entregaData);
     //Creacion de los detalles
