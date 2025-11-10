@@ -113,4 +113,10 @@ export class EntregaController {
     await this.entregaService.delete(id);
     return new ResponseDto(true, 'Entrega eliminada con Exito');
   }
+
+  @Post('generar-aleatorias')
+  async generar() {
+    await this.entregaService.generacionAutomaticaDeEntregas();
+    return { message: `Se generaron entregas aleatorias` };
+  }
 }
