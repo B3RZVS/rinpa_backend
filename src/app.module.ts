@@ -13,6 +13,7 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { AuthModule } from './modulos/auth/auth.module';
 import { ClienteModule } from './modulos/cliente/cliente.module';
 import { EntregaModule } from './modulos/entrega/entrega.module';
+import { EstadisticasModule } from './modulos/estadisticas/estadisticas.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EntregaModule } from './modulos/entrega/entrega.module';
     AuthModule,
     ClienteModule,
     EntregaModule,
+    EstadisticasModule,
     // otros módulos
   ],
   providers: [PrismaService, AllExceptionsFilter],

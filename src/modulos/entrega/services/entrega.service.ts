@@ -9,6 +9,8 @@ import { ClienteValidator } from 'src/modulos/cliente/validators/cliente.validat
 import { EntregaValidator } from '../validators/entrega.validator';
 import { queryBuilder } from 'src/common/pagination/query-builder.util';
 import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
+import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
+import { fechaEntregaActual } from '../utils/fechaActual';
 
 @Injectable()
 export class EntregaService {
@@ -50,6 +52,10 @@ export class EntregaService {
     //Validacion de cliente
     await this.clienteValidator.ensureExistsById(entregaData.clienteId);
 
+    // Obtiene la hora local de Argentina
+    const fechaArgentina = fechaEntregaActual(entregaData);
+    // Reemplazamos la fecha en el DTO antes de guardar
+    entregaData.fecha = fechaArgentina;
     //Creacion de la entrega
     const entrega = await this.entregaDAO.create(entregaData);
     //Creacion de los detalles
@@ -73,5 +79,62 @@ export class EntregaService {
   async delete(id: number) {
     await this.entregaValidator.ensureExistsById(id);
     await this.entregaDAO.delete(id);
+  }
+
+  async generacionAutomaticaDeEntregas(): Promise<void> {
+    const clientes = [1, 2, 3, 4];
+    const usuarioId = 1;
+    const precioNaftaId = 3;
+    const productos = [
+      { id: 1, precio: 1450 },
+      { id: 2, precio: 1550 },
+      { id: 3, precio: 1950 },
+      { id: 4, precio: 2430 },
+      { id: 5, precio: 70 },
+      { id: 6, precio: 730 },
+      { id: 7, precio: 1050 },
+      { id: 8, precio: 3100 },
+    ];
+    for (let i = 0; i < 40; i++) {
+      const clienteId = randomItem(clientes);
+      const fecha = randomDate(new Date(2025, 8, 1), new Date(2025, 10, 7)); // sept-nov
+      const litrosGastados = randomNumber(2, 10);
+
+      const numDetalles = randomNumber(1, 3);
+      const detalles: CreateDetalleEntregaDTO[] = [];
+
+      for (let j = 0; j < numDetalles; j++) {
+        const prod = randomItem(productos);
+        detalles.push({
+          cantidad: randomNumber(1, 10),
+          precioUnitario: prod.precio,
+          productoId: prod.id,
+        });
+      }
+      const data: CreateEntregaDTO = {
+        clienteId,
+        usuarioId,
+        precioNaftaId,
+        litrosGastados,
+        fecha,
+        detalles,
+      };
+
+      await this.create(data);
+    }
+
+    function randomNumber(min: number, max: number): number {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randomItem<T>(arr: T[]): T {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function randomDate(start: Date, end: Date): Date {
+      return new Date(
+        start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+      );
+    }
   }
 }

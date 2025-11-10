@@ -55,7 +55,7 @@ export class EntregaDAO implements EntregaIDAO {
     const [entregas, total] = await Promise.all([
       this.prisma.entrega.findMany({
         where: whereClause,
-        orderBy: { fecha: 'desc' },
+        orderBy: { id: 'desc' },
         skip,
         take,
         include: {
