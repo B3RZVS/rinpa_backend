@@ -65,7 +65,7 @@ export class EstadisticasMapper {
 
       const costoNafta = (e.litrosGastados ?? 0) * (e.precioNafta?.precio ?? 0);
 
-      const total = subtotal + costoNafta;
+      const total = subtotal - costoNafta;
 
       return {
         numeroEntrega: (index + 1).toString().padStart(3, '0'),
