@@ -17,6 +17,7 @@ export class ClienteService {
   async getAll(): Promise<ClienteEntity[]> {
     return await this.clienteDAO.findAll();
   }
+
   async getAllPaginated(params: QueryParamsDto) {
     return queryBuilder<ClienteEntity>(
       (where, skip, take) =>

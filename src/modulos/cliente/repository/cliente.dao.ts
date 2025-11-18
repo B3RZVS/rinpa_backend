@@ -72,7 +72,7 @@ export class ClienteDAO implements ClienteIDAO {
         take,
         where: { isDeleted: false, ...where },
       }),
-      this.prisma.entrega.count({ where }),
+      this.prisma.cliente.count({ where }),
     ]);
 
     return [clientes.map((e) => ClienteMappers.toEntity(e)), total];
