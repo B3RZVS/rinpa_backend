@@ -4,13 +4,17 @@ import { PrecioNaftaMapper } from '../mappers/mapper-dao/precio-nafta.mapper';
 import { PrecioNaftaEntity } from '../entities/precioNafta.entity';
 import { PrecioNaftaIDAO } from '../types/precio-nafta.dao.interface';
 import { CreatePrecioNaftaDTO } from '../dtos/precioNafta/create-precio-nafta.dto';
+import { identity } from 'rxjs';
 
 @Injectable()
 export class PrecioNaftaDAO implements PrecioNaftaIDAO {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<PrecioNaftaEntity[]> {
-    const PrecioNafta = await this.prisma.precioNafta.findMany();
+    const PrecioNafta = await this.prisma.precioNafta.findMany({
+      orderBy: { fechaFin: 'desc' },
+      take: 5,
+    });
     return PrecioNafta.map(PrecioNaftaMapper.toEntity);
   }
 
