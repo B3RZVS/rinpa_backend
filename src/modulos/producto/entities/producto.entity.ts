@@ -46,6 +46,9 @@ export class ProductoEntity {
   getDescripcion() {
     return this.descripcion;
   }
+  getIsDelete() {
+    return this.isDetele;
+  }
 
   // Métodos útiles para obtener datos encapsulados
   getTipoProductoNombre() {

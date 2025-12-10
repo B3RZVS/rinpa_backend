@@ -4,6 +4,7 @@ import { ProductoIDAO } from 'src/modulos/producto/types/producto.dao.interface'
 import { ITipoProductoDAO } from 'src/modulos/producto/types/tipo-producto.dao.interface';
 import { MedidaValidator } from './medida.validator';
 import { TipoProductoValidator } from './tipo-producto.validator';
+import { ProductoValidationResult } from '../types/validator.type';
 
 @Injectable()
 export class ProductoValidator {
@@ -30,23 +31,47 @@ export class ProductoValidator {
     tipoProductoId: number,
     medidaID: number,
     idToExclude: number,
-  ): Promise<void> {
+  ): Promise<ProductoValidationResult> {
     const exists = await this.productoDAO.findByProducto(
       tipoProductoId,
       medidaID,
     );
-    if (exists && exists.getId() !== idToExclude) {
-      throw new ConflictException(
-        `El producto ${exists.getTipoProductoNombre()} ${exists.getMedidaNombreSimbolo()} ya existe.`,
-      );
+
+    // Existe pero está eliminado → se puede restaurar
+    if (exists && exists.getIsDelete()) {
+      return { status: 'RESTORE', productoId: exists.getId() };
     }
+
+    // Existe, no es el mismo, conflicto
+    if (exists && exists.getId() !== idToExclude) {
+      return {
+        status: 'CONFLICT',
+        message: `El producto ${exists.getTipoProductoNombre()} ${exists.getMedidaNombreSimbolo()} ya existe.`,
+      };
+    }
+
+    // Todo OK → se puede crear
+    return { status: 'OK' };
   }
+
   async validateCreate(
     tipoProductoId: number,
     medidaId: number,
-  ): Promise<void> {
-    await this.ensureNameIsUnique(tipoProductoId, medidaId, 0);
+  ): Promise<ProductoValidationResult> {
+    const nameCheck = await this.ensureNameIsUnique(
+      tipoProductoId,
+      medidaId,
+      0,
+    );
+
+    if (nameCheck.status !== 'OK') {
+      return nameCheck;
+    }
+
+    // Validaciones adicionales
     await this.medidaValidator.ensureExistsById(medidaId);
     await this.tipoProductoValidator.ensureExistsById(tipoProductoId);
+
+    return { status: 'OK' };
   }
 }
