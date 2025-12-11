@@ -3,9 +3,9 @@ import { EntregaIDAO } from '../types/entrega.dao.interface';
 import { EntregaMapper } from '../mappers/mapper-dao/entrega.mapper';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
 import { DetalleEntregaDAO } from './detalle-entrega.dao';
-import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
 import { UpdateEntregaDTO } from '../dtos/entrega/update-entrega.dto';
 
 @Injectable()
@@ -50,6 +50,7 @@ export class EntregaDAO implements EntregaIDAO {
     where: any,
     skip: number,
     take: number,
+    orderBy?: Prisma.EntregaOrderByWithRelationInput,
   ): Promise<[EntregaEntity[], number]> {
     const whereClause = { isDeleted: false, ...where };
     const [entregas, total] = await Promise.all([
@@ -89,6 +90,7 @@ export class EntregaDAO implements EntregaIDAO {
     const createdEntrega = await this.prisma.entrega.create({
       data,
     });
+
     return EntregaMapper.toEntity(createdEntrega);
   }
 

@@ -57,17 +57,22 @@ export class EstadisticasRepository {
     });
   }
   async findEntregasToday() {
-    const inicioDelDia = new Date();
-    inicioDelDia.setHours(0, 0, 0, 0);
+    const now = new Date();
 
-    const finDelDia = new Date();
-    finDelDia.setHours(23, 59, 59, 999);
+    // Día actual en ART
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const day = now.getDate();
 
+    // INICIO -> 23:00 del día anterior ART
+    const inicio = new Date(year, month, day - 2, 23, 0, 0, 0);
+    // FIN -> 22:59:59 del día actual ART
+    const fin = new Date();
     return this.prisma.entrega.count({
       where: {
         fecha: {
-          gte: inicioDelDia,
-          lte: finDelDia,
+          gte: inicio,
+          lte: fin,
         },
         isDeleted: false,
       },

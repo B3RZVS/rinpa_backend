@@ -7,14 +7,16 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EntregaService } from '../services/entrega.service';
 import { EntregaResponseMapper } from '../mappers/mappers-response/entrega-responde.mapper';
 import { CreateEntregaDTO } from '../dtos/entrega/create-entrega.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
-import { GetEntregaDTO } from '../dtos/entrega/get-entrega.dto';
 import { UpdateEntregaDTO } from '../dtos/entrega/update-entrega.dto';
 import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
+import { PaginatedResponseInterceptor } from 'src/common/pagination/interceptors/paginated-response.interceptor';
+import { EntregaEntity } from '../entities/entrega.entity';
 
 @Controller('entrega')
 export class EntregaController {
@@ -37,22 +39,25 @@ export class EntregaController {
     });
   }
   @Get('paginated')
+  @UseInterceptors(
+    new PaginatedResponseInterceptor<EntregaEntity, any>(
+      (entrega: EntregaEntity) => {
+        const cliente = entrega.getCliente();
+        const usuario = entrega.getUsuario();
+        const precioNafta = entrega.getPrecioNafta();
+
+        return EntregaResponseMapper.toResponse(
+          entrega,
+          cliente || null,
+          usuario || null,
+          precioNafta?.getPrecio() || null,
+        );
+      },
+    ),
+  )
   async getPaginatedEntregas(@Query() query: QueryParamsDto) {
-    const paginated = await this.entregaService.getAllPaginated(query);
-    const entregaResponse = paginated.data.map((entrega) => {
-      const cliente = entrega.getCliente();
-      const usuario = entrega.getUsuario();
-      const precioNafta = entrega.getPrecioNafta();
-
-      return EntregaResponseMapper.toResponse(
-        entrega,
-        cliente || null,
-        usuario || null,
-        precioNafta?.getPrecio() || null,
-      );
-    });
-
-    return { data: entregaResponse, meta: paginated.meta };
+    // Esto debe devolver: { data: EntregaEntity[], meta: {...} }
+    return await this.entregaService.getAllPaginated(query);
   }
 
   @Get(':id')
