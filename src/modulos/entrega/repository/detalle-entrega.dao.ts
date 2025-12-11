@@ -26,7 +26,7 @@ export class DetalleEntregaDAO implements DetalleEntregaIDAO {
   async create(
     data: CreateDetalleEntregaDTO | CreateDetalleEntregaDTO[],
     entregaId: number,
-  ) {
+  ): Promise<void> {
     const detalles = Array.isArray(data) ? data : [data];
     await this.prisma.detalleEntrega.createMany({
       data: detalles.map((d) => ({
