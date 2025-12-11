@@ -106,9 +106,8 @@ export class EntregaService {
       { id: 4, precio: 2430 },
       { id: 5, precio: 70 },
       { id: 6, precio: 730 },
-      { id: 7, precio: 1050 },
-      { id: 8, precio: 3100 },
     ];
+
     for (let i = 0; i < 40; i++) {
       const clienteId = randomItem(clientes);
       const fecha = randomDate(new Date(2025, 8, 1), new Date(2025, 10, 7)); // sept-nov
