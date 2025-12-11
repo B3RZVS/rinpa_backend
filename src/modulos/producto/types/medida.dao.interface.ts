@@ -10,4 +10,5 @@ export interface MedidaIDAO {
     unidadId: number,
   ): Promise<MedidaEntity | null>;
   findById(id: number): Promise<MedidaEntity | null>;
+  restore(id: number): Promise<MedidaEntity>;
 }

@@ -3,13 +3,14 @@ import { TipoProducto as PrismaTipoProducto } from '@prisma/client';
 
 export class TipoProductoMapper {
   static toEntity(model: PrismaTipoProducto): TipoProductoEntity {
-    return new TipoProductoEntity(model.id, model.nombre);
+    return new TipoProductoEntity(model.id, model.nombre, model.isDeleted);
   }
 
   static toPrisma(entity: TipoProductoEntity): PrismaTipoProducto {
     return {
       id: entity.getId(),
       nombre: entity.getNombre(),
+      isDeleted: entity.isDelete(),
     };
   }
 }

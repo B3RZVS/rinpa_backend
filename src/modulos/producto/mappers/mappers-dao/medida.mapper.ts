@@ -13,6 +13,11 @@ export class MedidaMapper {
 
     const unidadEntity = UnidadMapper.toEntity(model.unidad);
 
-    return new MedidaEntity(model.id, model.cantidad, unidadEntity);
+    return new MedidaEntity(
+      model.id,
+      model.cantidad,
+      model.isDeleted,
+      unidadEntity,
+    );
   }
 }

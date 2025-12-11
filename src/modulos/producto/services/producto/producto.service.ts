@@ -26,14 +26,11 @@ export class ProductoService {
       medidaId,
     );
 
-    // Caso: restaurar
     if (validation.status === 'RESTORE') {
-      return await this.productoDAO.restore(validation.productoId);
+      return await this.productoDAO.restore(validation.id, precio);
     } else if (validation.status === 'CONFLICT') {
       throw new ConflictException(validation.message);
     } else {
-      // Si está OK → crear
-      console.log('entre porque si');
       return this.productoDAO.create(
         precio,
         descripcion,

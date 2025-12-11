@@ -71,6 +71,7 @@ export class ClienteDAO implements ClienteIDAO {
         skip,
         take,
         where: { isDeleted: false, ...where },
+        orderBy: { id: 'desc' },
       }),
       this.prisma.cliente.count({ where }),
     ]);

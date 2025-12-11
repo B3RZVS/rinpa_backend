@@ -4,7 +4,7 @@ import { ProductoIDAO } from 'src/modulos/producto/types/producto.dao.interface'
 import { ITipoProductoDAO } from 'src/modulos/producto/types/tipo-producto.dao.interface';
 import { MedidaValidator } from './medida.validator';
 import { TipoProductoValidator } from './tipo-producto.validator';
-import { ProductoValidationResult } from '../types/validator.type';
+import { ValidationResult } from '../types/validator.type';
 
 @Injectable()
 export class ProductoValidator {
@@ -31,7 +31,7 @@ export class ProductoValidator {
     tipoProductoId: number,
     medidaID: number,
     idToExclude: number,
-  ): Promise<ProductoValidationResult> {
+  ): Promise<ValidationResult> {
     const exists = await this.productoDAO.findByProducto(
       tipoProductoId,
       medidaID,
@@ -39,7 +39,7 @@ export class ProductoValidator {
 
     // Existe pero está eliminado → se puede restaurar
     if (exists && exists.getIsDelete()) {
-      return { status: 'RESTORE', productoId: exists.getId() };
+      return { status: 'RESTORE', id: exists.getId() };
     }
 
     // Existe, no es el mismo, conflicto
@@ -57,7 +57,7 @@ export class ProductoValidator {
   async validateCreate(
     tipoProductoId: number,
     medidaId: number,
-  ): Promise<ProductoValidationResult> {
+  ): Promise<ValidationResult> {
     const nameCheck = await this.ensureNameIsUnique(
       tipoProductoId,
       medidaId,

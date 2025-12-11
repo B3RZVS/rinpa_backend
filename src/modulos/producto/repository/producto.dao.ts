@@ -21,6 +21,7 @@ export class ProductoDAO implements ProductoIDAO {
           },
         },
       },
+      orderBy: { id: 'desc' },
     });
     try {
       return productos.map(ProductoMapper.toEntity);
@@ -69,10 +70,10 @@ export class ProductoDAO implements ProductoIDAO {
     });
   }
   //Restore
-  async restore(id: number): Promise<ProductoEntity> {
+  async restore(id: number, precio?: number): Promise<ProductoEntity> {
     const restoreProducto = await this.prisma.producto.update({
       where: { id },
-      data: { isDeleted: false },
+      data: { isDeleted: false, precio: precio },
     });
     const producto = await this.findById(restoreProducto.id);
     if (!producto) throw new Error('Error al buscar el producto recién creada');

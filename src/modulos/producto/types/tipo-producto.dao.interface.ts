@@ -7,4 +7,5 @@ export interface ITipoProductoDAO {
   create(nombre: string): Promise<TipoProductoEntity>;
   update(id: number, nombre: string): Promise<TipoProductoEntity>;
   delete(id: number): Promise<void>;
+  restore(id: number): Promise<TipoProductoEntity>;
 }

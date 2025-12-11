@@ -1,5 +1,6 @@
 import { Injectable, Inject, ConflictException } from '@nestjs/common';
 import { MedidaIDAO } from 'src/modulos/producto/types/medida.dao.interface';
+import { ValidationResult } from '../types/validator.type';
 
 @Injectable()
 export class MedidaValidator {
@@ -22,11 +23,19 @@ export class MedidaValidator {
     cantidad: number,
     unidadID: number,
     idToExclude: number,
-  ): Promise<void> {
+  ): Promise<ValidationResult> {
     const exists = await this.medidaDAO.findByCantidad(cantidad, unidadID);
+
+    if (exists && exists.isDelete()) {
+      return { status: 'RESTORE', id: exists.getId() };
+    }
     const unidad = exists?.getUnidadSimbolo();
     if (exists && exists.getId() !== idToExclude) {
-      throw new ConflictException(`La medida ${cantidad} ${unidad} ya existe.`);
+      return {
+        status: 'CONFLICT',
+        message: `La medida ${cantidad} ${unidad} ya existe.`,
+      };
     }
+    return { status: 'OK' };
   }
 }

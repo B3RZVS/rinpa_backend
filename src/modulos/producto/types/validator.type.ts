@@ -1,4 +1,4 @@
-export type ProductoValidationResult =
+export type ValidationResult =
   | { status: 'OK' }
-  | { status: 'RESTORE'; productoId: number }
+  | { status: 'RESTORE'; id: number }
   | { status: 'CONFLICT'; message: string };

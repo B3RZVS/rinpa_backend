@@ -10,7 +10,9 @@ export class MedidaDAO implements MedidaIDAO {
 
   async findAll(): Promise<MedidaEntity[]> {
     const medidas = await this.prisma.medida.findMany({
+      where: { isDeleted: false },
       include: { unidad: true },
+      orderBy: { id: 'desc' },
     });
     return medidas.map(MedidaMapper.toEntity);
   }
@@ -21,16 +23,12 @@ export class MedidaDAO implements MedidaIDAO {
         cantidad,
         unidadId: unidad,
       },
-    });
-
-    const medidaConUnidad = await this.prisma.medida.findUnique({
-      where: { id: createdMedida.id },
       include: { unidad: true },
     });
 
-    if (!medidaConUnidad)
+    if (!createdMedida)
       throw new Error('Error al buscar la medida recién creada');
-    return MedidaMapper.toEntity(medidaConUnidad);
+    return MedidaMapper.toEntity(createdMedida);
   }
 
   async update(
@@ -44,21 +42,28 @@ export class MedidaDAO implements MedidaIDAO {
         cantidad,
         unidadId: unidad,
       },
-    });
-    const medidaConUnidad = await this.prisma.medida.findUnique({
-      where: { id: updatedMedida.id },
       include: { unidad: true },
     });
 
-    if (!medidaConUnidad)
+    if (!updatedMedida)
       throw new Error('Error al buscar la medida recién modificada');
-    return MedidaMapper.toEntity(medidaConUnidad);
+    return MedidaMapper.toEntity(updatedMedida);
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.medida.delete({
+    await this.prisma.medida.update({
       where: { id },
+      data: { isDeleted: true },
     });
+  }
+
+  async restore(id: number): Promise<MedidaEntity> {
+    const tipo = await this.prisma.medida.update({
+      where: { id },
+      data: { isDeleted: false },
+      include: { unidad: true },
+    });
+    return MedidaMapper.toEntity(tipo);
   }
 
   async findById(id: number): Promise<MedidaEntity | null> {

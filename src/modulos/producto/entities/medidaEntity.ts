@@ -2,12 +2,19 @@ import { UnidadEntity } from './Unidad.entity';
 export class MedidaEntity {
   private id: number;
   private cantidad: number;
+  private isDeleted: boolean;
   private unidad: UnidadEntity;
 
-  constructor(id: number, cantidad: number, unidad: UnidadEntity) {
+  constructor(
+    id: number,
+    cantidad: number,
+    isDeleted: boolean,
+    unidad: UnidadEntity,
+  ) {
     this.id = id;
     this.setCantidad(cantidad);
     this.setUnidad(unidad);
+    this.isDeleted = isDeleted;
   }
 
   setId(id: number): void {
@@ -15,6 +22,9 @@ export class MedidaEntity {
   }
   getId(): number {
     return this.id;
+  }
+  public isDelete(): boolean {
+    return this.isDeleted;
   }
 
   setCantidad(cantidad: number): void {

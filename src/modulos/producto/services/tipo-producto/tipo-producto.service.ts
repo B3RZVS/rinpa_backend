@@ -16,13 +16,22 @@ export class TipoProductoService {
   }
 
   async create(nombre: string): Promise<TipoProductoEntity> {
-    await this.validator.ensureNameIsUnique(nombre);
-    return this.tipoProductoDAO.create(nombre);
+    const validation = await this.validator.ensureNameIsUnique(nombre);
+    if (validation.status === 'RESTORE') {
+      return await this.tipoProductoDAO.restore(validation.id);
+    } else if (validation.status === 'CONFLICT') {
+      throw new ConflictException(validation.message);
+    } else {
+      return this.tipoProductoDAO.create(nombre);
+    }
   }
 
   async update(id: number, nuevoNombre: string): Promise<TipoProductoEntity> {
     await this.validator.ensureExistsById(id);
-    await this.validator.ensureNameIsUnique(nuevoNombre, id);
+    const validation = await this.validator.ensureNameIsUnique(nuevoNombre, id);
+    if (validation.status === 'CONFLICT') {
+      throw new ConflictException(validation.message);
+    }
     return await this.tipoProductoDAO.update(id, nuevoNombre);
   }
 
