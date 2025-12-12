@@ -1,4 +1,5 @@
 import { ProductoEntity } from 'src/modulos/producto/entities/producto.entity';
+import { UpdateProductoDTO } from '../dtos/producto/update-producto.dto';
 
 export interface ProductoIDAO {
   findAll(): Promise<ProductoEntity[]>;
@@ -13,10 +14,7 @@ export interface ProductoIDAO {
     medidaId: number,
     tipoProducto: number,
   ): Promise<ProductoEntity>;
-  update(
-    id: number,
-    precio?: number,
-    descripcion?: string,
-  ): Promise<ProductoEntity>;
+  update(data: UpdateProductoDTO): Promise<ProductoEntity>;
   delete(id: number): Promise<void>;
+  restore(id: number): Promise<ProductoEntity>;
 }

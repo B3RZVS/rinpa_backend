@@ -11,6 +11,7 @@ import { queryBuilder } from 'src/common/pagination/query-builder.util';
 import { QueryParamsDto } from 'src/common/pagination/queryParams.dto';
 import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
 import { fechaEntregaActual } from '../utils/fechaActual';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EntregaService {
@@ -28,10 +29,23 @@ export class EntregaService {
   }
 
   async getAllPaginated(params: QueryParamsDto) {
-    return queryBuilder<EntregaEntity>(
-      (where, skip, take) =>
-        this.entregaDAO.findAllPaginated(where, skip, take),
-      params,
+    // Campos en los que se puede buscar
+    const searchFields = [
+      'cliente.nombre',
+      'cliente.apellido',
+      'usuario.nombre',
+      'usuario.apellido',
+    ];
+
+    return queryBuilder<EntregaEntity, Prisma.EntregaWhereInput>(
+      (where, skip, take) => {
+        const takeNumber: number = Number(take) || 10;
+        return this.entregaDAO.findAllPaginated(where, skip, takeNumber);
+      },
+      {
+        ...params,
+        searchFields,
+      },
     );
   }
 
@@ -92,9 +106,8 @@ export class EntregaService {
       { id: 4, precio: 2430 },
       { id: 5, precio: 70 },
       { id: 6, precio: 730 },
-      { id: 7, precio: 1050 },
-      { id: 8, precio: 3100 },
     ];
+
     for (let i = 0; i < 40; i++) {
       const clienteId = randomItem(clientes);
       const fecha = randomDate(new Date(2025, 8, 1), new Date(2025, 10, 7)); // sept-nov

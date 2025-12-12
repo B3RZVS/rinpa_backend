@@ -6,7 +6,7 @@ export interface DetalleEntregaIDAO {
   create(
     data: CreateDetalleEntregaDTO | CreateDetalleEntregaDTO[],
     entregaId: number,
-  ): void;
+  ): Promise<void>;
   update(id: number, cantidad: number): Promise<DetalleEntregaEntity>;
   delete(id: number): Promise<void>;
 

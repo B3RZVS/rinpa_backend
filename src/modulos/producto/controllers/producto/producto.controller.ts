@@ -12,7 +12,6 @@ import { ProductoResponseMapper } from '../../mappers/mappersResponse/producto/p
 import { CreateProductoDTO } from '../../dtos/producto/create-producto.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { UpdateProductoDTO } from '../../dtos/producto/update-producto.dto';
-import { DeleteProductoDTO } from '../../dtos/producto/delete-producto.dto';
 
 @Controller('producto')
 export class ProductoController {
@@ -41,11 +40,7 @@ export class ProductoController {
 
   @Put()
   async actualizarProducto(@Body() dto: UpdateProductoDTO) {
-    const producto = await this.productoService.update(
-      dto.id,
-      dto.precio,
-      dto.descripcion,
-    );
+    const producto = await this.productoService.update(dto);
     return new ResponseDto(
       true,
       'Producto modificada con éxito',

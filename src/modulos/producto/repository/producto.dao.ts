@@ -3,6 +3,7 @@ import { ProductoIDAO } from '../types/producto.dao.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductoMapper } from '../mappers/mappers-dao/producto.mapper';
 import { Injectable } from '@nestjs/common';
+import { UpdateProductoDTO } from '../dtos/producto/update-producto.dto';
 
 @Injectable()
 export class ProductoDAO implements ProductoIDAO {
@@ -20,6 +21,7 @@ export class ProductoDAO implements ProductoIDAO {
           },
         },
       },
+      orderBy: { id: 'desc' },
     });
     try {
       return productos.map(ProductoMapper.toEntity);
@@ -50,17 +52,9 @@ export class ProductoDAO implements ProductoIDAO {
   }
 
   //PUT
-  async update(
-    id: number,
-    precio?: number,
-    descripcion?: string,
-  ): Promise<ProductoEntity> {
-    const data: any = {};
-    if (precio !== undefined) data.precio = precio;
-    if (descripcion !== undefined) data.descripcion = descripcion;
-
+  async update(data: UpdateProductoDTO): Promise<ProductoEntity> {
     const updateProducto = await this.prisma.producto.update({
-      where: { id },
+      where: { id: data.id },
       data,
     });
     const producto = await this.findById(updateProducto.id);
@@ -74,6 +68,16 @@ export class ProductoDAO implements ProductoIDAO {
       where: { id },
       data: { isDeleted: true },
     });
+  }
+  //Restore
+  async restore(id: number, precio?: number): Promise<ProductoEntity> {
+    const restoreProducto = await this.prisma.producto.update({
+      where: { id },
+      data: { isDeleted: false, precio: precio },
+    });
+    const producto = await this.findById(restoreProducto.id);
+    if (!producto) throw new Error('Error al buscar el producto recién creada');
+    return producto;
   }
 
   //FINDById

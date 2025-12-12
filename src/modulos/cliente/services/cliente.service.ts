@@ -35,6 +35,9 @@ export class ClienteService {
   }
 
   async update(data: UpdateClienteDTO, id: number): Promise<ClienteEntity> {
+    if (data.email) {
+      await this.clienteValidator.ensureExistsByEmail(data.email, id);
+    }
     await this.clienteValidator.ensureExistsById(id);
     return this.clienteDAO.update(data, id);
   }

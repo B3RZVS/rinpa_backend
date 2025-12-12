@@ -9,7 +9,10 @@ export class TipoProductoDAO implements ITipoProductoDAO {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<TipoProductoEntity[]> {
-    const modelos = await this.prisma.tipoProducto.findMany();
+    const modelos = await this.prisma.tipoProducto.findMany({
+      where: { isDeleted: false },
+      orderBy: { id: 'desc' },
+    });
     return modelos.map(TipoProductoMapper.toEntity);
   }
 
@@ -29,12 +32,26 @@ export class TipoProductoDAO implements ITipoProductoDAO {
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.tipoProducto.delete({ where: { id } });
+    await this.prisma.tipoProducto.update({
+      where: { id },
+      data: { isDeleted: true },
+    });
   }
-
+  async restore(id: number): Promise<TipoProductoEntity> {
+    const tipo = await this.prisma.tipoProducto.update({
+      where: { id },
+      data: { isDeleted: false },
+    });
+    return TipoProductoMapper.toEntity(tipo);
+  }
   async findByNombre(nombre: string): Promise<TipoProductoEntity | null> {
-    const tipoProducto = await this.prisma.tipoProducto.findUnique({
-      where: { nombre },
+    const tipoProducto = await this.prisma.tipoProducto.findFirst({
+      where: {
+        nombre: {
+          equals: nombre.toLowerCase(),
+          mode: 'insensitive',
+        },
+      },
     });
     return tipoProducto ? TipoProductoMapper.toEntity(tipoProducto) : null;
   }

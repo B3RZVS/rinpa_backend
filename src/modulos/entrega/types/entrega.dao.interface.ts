@@ -1,4 +1,3 @@
-import { CreateDetalleEntregaDTO } from '../dtos/detalleEntrega/create-detalle-entrega.dto';
 import { CreateEntrega } from '../dtos/entrega/create-entrega.dto';
 import { UpdateEntregaDTO } from '../dtos/entrega/update-entrega.dto';
 import { EntregaEntity } from '../entities/entrega.entity';

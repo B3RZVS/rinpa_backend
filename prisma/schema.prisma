@@ -18,18 +18,21 @@ datasource db {
 model TipoProducto {
   id     Int    @id @default(autoincrement())
   nombre String @unique
+  isDeleted   Boolean @default(false)
   productos Producto[]
 }
 model Unidad {
   id     Int    @id @default(autoincrement())
   nombre String @unique
   simbolo String
+  isDeleted   Boolean @default(false)
   medidas Medida[]
 }
 model Medida {
   id        Int    @id @default(autoincrement())
   cantidad  Int
   unidadId  Int
+  isDeleted   Boolean @default(false)
   unidad    Unidad @relation(fields: [unidadId], references: [id])
   @@unique([cantidad, unidadId], name: "Medida_cantidad_unidadId_unique")
   productos Producto[]

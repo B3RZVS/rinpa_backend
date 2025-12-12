@@ -31,7 +31,7 @@ export class ClienteController {
     const paginated = await this.clienteService.getAllPaginated(query);
     const clienteResponse = await Promise.all(
       paginated.data.map(async (cliente) => {
-        return ClienteMappers.toResponse(cliente);
+        return await ClienteMappers.toResponse(cliente);
       }),
     );
 

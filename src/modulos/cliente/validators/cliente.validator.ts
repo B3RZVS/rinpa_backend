@@ -14,10 +14,14 @@ export class ClienteValidator {
       throw new ConflictException(`El cliente con ID '${id}' no existe.`);
     }
   }
-  async ensureExistsByEmail(email: string): Promise<void> {
+  async ensureExistsByEmail(email: string, id?: number): Promise<void> {
     const exists = await this.clienteDAO.findByEmail(email);
 
     if (exists) {
+      if (id && exists.getId() != id) {
+        throw new ConflictException(`El cliente con email ${email} ya existe.`);
+      }
+
       const isDelete = exists.getIsDelete();
       if (!isDelete) {
         throw new ConflictException(`El cliente con email ${email} ya existe.`);
