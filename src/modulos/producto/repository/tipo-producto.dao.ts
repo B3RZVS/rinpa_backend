@@ -45,8 +45,13 @@ export class TipoProductoDAO implements ITipoProductoDAO {
     return TipoProductoMapper.toEntity(tipo);
   }
   async findByNombre(nombre: string): Promise<TipoProductoEntity | null> {
-    const tipoProducto = await this.prisma.tipoProducto.findUnique({
-      where: { nombre },
+    const tipoProducto = await this.prisma.tipoProducto.findFirst({
+      where: {
+        nombre: {
+          equals: nombre.toLowerCase(),
+          mode: 'insensitive',
+        },
+      },
     });
     return tipoProducto ? TipoProductoMapper.toEntity(tipoProducto) : null;
   }
